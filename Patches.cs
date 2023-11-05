@@ -46,9 +46,10 @@ namespace PolyMod
 				TileData tile = __result.tiles[i];
 				JToken tileJson = json["map"][i];
 
+				tile.climate = (tileJson["climate"] == null || (int)tileJson["climate"] < 0 || (int)tileJson["climate"] > 16) ? 0 : (int)tileJson["climate"];
+
 				if (tile.rulingCityCoordinates != new WorldCoordinates(-1, -1)) continue;
 
-				tile.climate = (tileJson["climate"] == null || (int)tileJson["climate"] < 0 || (int)tileJson["climate"] > 16) ? 0 : (int)tileJson["climate"];
 				tile.terrain = tileJson["terrain"] == null ? TerrainData.Type.None : EnumCache<TerrainData.Type>.GetType((string)tileJson["terrain"]);
 				tile.improvement = tileJson["improvement"] == null ? null : new() { type = EnumCache<ImprovementData.Type>.GetType((string)tileJson["improvement"]) };
 				if (tile.improvement != null && tile.improvement.type == ImprovementData.Type.City) {
