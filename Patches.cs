@@ -35,7 +35,7 @@ namespace PolyMod
 				settings.MapSize = (ushort)json["size"];
 			}
 		}
-		
+
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.GenerateInternal))]
 		private static void MapGenerator_GenerateInternal(ref MapData __result)
@@ -48,11 +48,12 @@ namespace PolyMod
 
 				tile.climate = (tileJson["climate"] == null || (int)tileJson["climate"] < 0 || (int)tileJson["climate"] > 16) ? 0 : (int)tileJson["climate"];
 
-				if (tile.rulingCityCoordinates != new WorldCoordinates(-1, -1)) continue;
+				if (tile.rulingCityCoordinates != WorldCoordinates.NULL_COORDINATES) continue;
 
 				tile.terrain = tileJson["terrain"] == null ? TerrainData.Type.None : EnumCache<TerrainData.Type>.GetType((string)tileJson["terrain"]);
 				tile.improvement = tileJson["improvement"] == null ? null : new() { type = EnumCache<ImprovementData.Type>.GetType((string)tileJson["improvement"]) };
-				if (tile.improvement != null && tile.improvement.type == ImprovementData.Type.City) {
+				if (tile.improvement != null && tile.improvement.type == ImprovementData.Type.City)
+				{
 					tile.improvement = new ImprovementState
 					{
 						type = ImprovementData.Type.City,

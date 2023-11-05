@@ -1,6 +1,8 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine;
 
 namespace PolyMod
@@ -19,21 +21,16 @@ namespace PolyMod
 
 		internal static void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.F1))
+			if (Input.GetKeyDown(KeyCode.Tab))
 			{
 				foghack = !foghack;
 				ShowStatusPopup(nameof(foghack), foghack);
-			}
-			if (Input.GetKeyDown(KeyCode.F2))
-			{
-				GameManager.LocalPlayer.Currency += 100;
-				ShowPopup("<color=\"yellow\">+100 stars");
 			}
 		}
 
 		private static void ShowPopup(string value)
 		{
-			Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<PopupBase.PopupButtonData> buttons = new(new[] { new PopupBase.PopupButtonData("buttons.ok") });
+			Il2CppReferenceArray<PopupBase.PopupButtonData> buttons = ToIl2CppArray(new PopupBase.PopupButtonData("buttons.ok"));
 			PopupManager.GetBasicPopup(new PopupManager.BasicPopupData("PolyMod", value, buttons)).Show();
 		}
 
@@ -45,6 +42,11 @@ namespace PolyMod
 				status = "<color=\"green\">ENABLED";
 			}
 			ShowPopup($"Module {name} is now {status}");
+		}
+
+		private static Il2CppReferenceArray<T> ToIl2CppArray<T>(params T[] array) where T : Il2CppObjectBase
+		{
+			return new Il2CppReferenceArray<T>(array);
 		}
 	}
 }
