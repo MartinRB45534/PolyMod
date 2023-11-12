@@ -10,8 +10,9 @@ namespace PolyMod
 		internal static void PreGenerate(ref GameState state)
 		{
 			JObject json = JObject.Parse(mapPath);
-			ushort size = (ushort)json["size"];
-			state.Map = new(size, size);
+			ushort width = (ushort)json["width"];
+			ushort height = (ushort)json["height"];
+			state.Map = new(width, height);
 			//TODO: edit players number
 		}
 
