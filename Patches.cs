@@ -1,7 +1,5 @@
 ﻿using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
-using Newtonsoft.Json.Linq;
-using Polytopia.Data;
 
 namespace PolyMod
 {
@@ -26,47 +24,17 @@ namespace PolyMod
 		}
 
 		[HarmonyPrefix]
-		[HarmonyPatch(typeof(LocalClient), nameof(LocalClient.CreateSession))]
-		static void LocalClient_CreateSession(ref GameSettings settings)
+		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.Generate))]
+		static void MapGenerator_Generate(ref GameState state)
 		{
-			JObject json = JObject.Parse(File.ReadAllText(BepInEx.Paths.BepInExRootPath + "/map.json"));
-			if (json["size"] != null)
-			{
-				settings.MapSize = (ushort)json["size"];
-			}
+			MapEditor.PreGenerate(ref state);
 		}
 
 		[HarmonyPostfix]
-		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.GenerateInternal))]
-		private static void MapGenerator_GenerateInternal(ref MapData __result)
+		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.Generate))]
+		private static void MapGenerator_Generate_(ref GameState state)
 		{
-			JObject json = JObject.Parse(File.ReadAllText(BepInEx.Paths.BepInExRootPath + "/map.json"));
-			for (int i = 0; i < __result.tiles.Length; i++)
-			{
-				TileData tile = __result.tiles[i];
-				JToken tileJson = json["map"][i];
-
-				tile.climate = (tileJson["climate"] == null || (int)tileJson["climate"] < 0 || (int)tileJson["climate"] > 16) ? 0 : (int)tileJson["climate"];
-
-				if (tile.rulingCityCoordinates != WorldCoordinates.NULL_COORDINATES) continue;
-
-				tile.terrain = tileJson["terrain"] == null ? TerrainData.Type.None : EnumCache<TerrainData.Type>.GetType((string)tileJson["terrain"]);
-				tile.improvement = tileJson["improvement"] == null ? null : new() { type = EnumCache<ImprovementData.Type>.GetType((string)tileJson["improvement"]) };
-				if (tile.improvement != null && tile.improvement.type == ImprovementData.Type.City)
-				{
-					tile.improvement = new ImprovementState
-					{
-						type = ImprovementData.Type.City,
-						founded = 0,
-						level = 1,
-						borderSize = 1,
-						production = 1
-					};
-				}
-				tile.resource = tileJson["resource"] == null ? null : new() { type = EnumCache<ResourceData.Type>.GetType((string)tileJson["resource"]) };
-
-				__result.tiles[i] = tile;
-			}
+			MapEditor.PostGenerate(ref state);
 		}
 	}
 }

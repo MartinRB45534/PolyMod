@@ -24,27 +24,11 @@ namespace PolyMod
 			if (Input.GetKeyDown(KeyCode.Tab))
 			{
 				foghack = !foghack;
-				ShowStatusPopup(nameof(foghack), foghack);
+				Popup.ShowStatus(nameof(foghack), foghack);
 			}
 		}
 
-		private static void ShowPopup(string value)
-		{
-			Il2CppReferenceArray<PopupBase.PopupButtonData> buttons = ToIl2CppArray(new PopupBase.PopupButtonData("buttons.ok"));
-			PopupManager.GetBasicPopup(new PopupManager.BasicPopupData("PolyMod", value, buttons)).Show();
-		}
-
-		private static void ShowStatusPopup(string name, bool value)
-		{
-			string status = "<color=\"red\">DISABLED";
-			if (value)
-			{
-				status = "<color=\"green\">ENABLED";
-			}
-			ShowPopup($"Module {name} is now {status}");
-		}
-
-		private static Il2CppReferenceArray<T> ToIl2CppArray<T>(params T[] array) where T : Il2CppObjectBase
+		internal static Il2CppReferenceArray<T> ToIl2CppArray<T>(params T[] array) where T : Il2CppObjectBase
 		{
 			return new Il2CppReferenceArray<T>(array);
 		}
