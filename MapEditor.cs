@@ -5,11 +5,17 @@ namespace PolyMod
 {
 	internal static class MapEditor
 	{
-		internal static string mapPath = File.ReadAllText(BepInEx.Paths.BepInExRootPath + "/map.json"); //TODO: file open dialog
+		private static string _mapPath = BepInEx.Paths.BepInExRootPath + "/map.json"; //TODO: file open dialog
+		private static JObject? _mapJson;
+
+		private static JObject GetMapJson() 
+		{
+			return _mapJson ?? JObject.Parse(File.ReadAllText(_mapPath));
+		}
 
 		internal static void PreGenerate(ref GameState state)
 		{
-			JObject json = JObject.Parse(mapPath);
+			JObject json = GetMapJson();
 			ushort width = (ushort)json["width"];
 			ushort height = (ushort)json["height"];
 			state.Map = new(width, height);
@@ -18,7 +24,7 @@ namespace PolyMod
 
 		internal static void PostGenerate(ref GameState state)
 		{
-			JObject json = JObject.Parse(mapPath);
+			JObject json = GetMapJson();
 			MapData map = state.Map;
 
 			for (int i = 0; i < map.tiles.Length; i++)
@@ -47,6 +53,8 @@ namespace PolyMod
 
 				map.tiles[i] = tile;
 			}
+
+			_mapJson = null;
 		}
 	}
 }
