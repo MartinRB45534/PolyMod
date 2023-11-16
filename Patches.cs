@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using Il2CppInterop.Runtime.Injection;
 
 namespace PolyMod
 {
@@ -7,20 +6,20 @@ namespace PolyMod
 	{
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(TileData), nameof(TileData.GetExplored))]
-		private static void TileData_GetExplored(ref bool __result)
+		private static void TileData_GetExplored(ref bool __result, ref byte playerId)
 		{
-			if (Plugin.foghack)
+			if (GameManager.LocalPlayer == null) return;
+			if (Plugin.foghack && playerId == GameManager.LocalPlayer.Id)
 			{
 				__result = true;
 			}
 		}
 
 		[HarmonyPostfix]
-		[HarmonyPatch(typeof(GameManager), nameof(GameManager.Awake))]
-		private static void GameManager_Awake(GameManager __instance)
+		[HarmonyPatch(typeof(GameManager), nameof(GameManager.Update))]
+		private static void GameManager_Update(GameManager __instance)
 		{
-			ClassInjector.RegisterTypeInIl2Cpp(typeof(Behaviour));
-			__instance.gameObject.AddComponent<Behaviour>();
+			Plugin.Update();
 		}
 
 		[HarmonyPrefix]

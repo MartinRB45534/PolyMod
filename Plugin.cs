@@ -12,9 +12,7 @@ namespace PolyMod
 	{
 		internal static bool foghack = false;
 
-		public override void Load() => Load_();
-
-		private static void Load_()
+		public override void Load() 
 		{
 			Harmony.CreateAndPatchAll(typeof(Patches));
 		}
@@ -25,6 +23,11 @@ namespace PolyMod
 			{
 				foghack = !foghack;
 				Popup.ShowStatus(nameof(foghack), foghack);
+			}
+			if (Input.GetKeyDown(KeyCode.F1))
+			{
+				GameManager.LocalPlayer.Currency += 1000;
+				Popup.Show("+1k stars");
 			}
 		}
 
