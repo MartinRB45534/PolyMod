@@ -5,6 +5,9 @@ namespace PolyMod
 {
 	internal static class MapEditor
 	{
+		private const ushort MIN = 6;
+		private const ushort MAX = 100;
+
 		private static string _mapPath = BepInEx.Paths.BepInExRootPath + "/map.json"; //TODO: file open dialog
 		private static JObject? _mapJson;
 
@@ -16,10 +19,12 @@ namespace PolyMod
 		internal static void PreGenerate(ref GameState state)
 		{
 			JObject json = GetMapJson();
-			ushort width = (ushort)json["width"];
-			ushort height = (ushort)json["height"];
-			state.Map = new(width, height);
-			//TODO: edit players number
+			ushort size = (ushort)json["size"];
+			if(size < MIN || size > MAX) 
+			{
+				throw new Exception($"The map size must be between {MIN} and {MAX}");
+			}
+			state.Map = new(size,size);
 		}
 
 		internal static void PostGenerate(ref GameState state)
