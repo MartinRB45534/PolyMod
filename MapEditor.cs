@@ -5,9 +5,6 @@ namespace PolyMod
 {
 	internal static class MapEditor
 	{
-		private const ushort MIN = 6;
-		private const ushort MAX = 100;
-
 		private static string _mapPath = BepInEx.Paths.BepInExRootPath + "/map.json"; //TODO: file open dialog
 		private static JObject? _mapJson;
 
@@ -20,9 +17,9 @@ namespace PolyMod
 		{
 			JObject json = GetMapJson();
 			ushort size = (ushort)json["size"];
-			if(size < MIN || size > MAX) 
+			if(size < Plugin.MAP_MIN_SIZE || size > Plugin.MAP_MAX_SIZE) 
 			{
-				throw new Exception($"The map size must be between {MIN} and {MAX}");
+				throw new Exception($"The map size must be between {Plugin.MAP_MIN_SIZE} and {Plugin.MAP_MAX_SIZE}");
 			}
 			state.Map = new(size,size);
 		}

@@ -14,27 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.674" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="GameLogicAssembly">
-      <HintPath>lib\GameLogicAssembly.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2Cppmscorlib">
-      <HintPath>lib\Il2Cppmscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PolytopiaAssembly">
-      <HintPath>lib\PolytopiaAssembly.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>lib\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>lib\UnityEngine.InputLegacyModule.dll</HintPath>
-    </Reference>
+    <Reference Include="lib\*.dll" />
   </ItemGroup>
 
 </Project>

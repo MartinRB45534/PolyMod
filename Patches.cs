@@ -35,5 +35,19 @@ namespace PolyMod
 		{
 			MapEditor.PostGenerate(ref state);
 		}
+
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(DebugConsole), nameof(DebugConsole.ExecuteCommand))]
+		private static bool DebugConsole_ExecuteCommand(ref string command)
+		{
+			return !Commands.Execute(command);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(DebugConsole), nameof(DebugConsole.CmdHelp))]
+		private static void DebugConsole_CmdHelp()
+		{
+			Commands.Help();
+		}
 	}
 }
