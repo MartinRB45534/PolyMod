@@ -5,6 +5,13 @@ namespace PolyMod
 	internal class Patches
 	{
 		[HarmonyPostfix]
+		[HarmonyPatch(typeof(GameManager), nameof(GameManager.Update))]
+		private static void GameManager_Update(GameManager __instance)
+		{
+			Plugin.Update();
+		}
+
+		[HarmonyPostfix]
 		[HarmonyPatch(typeof(TileData), nameof(TileData.GetExplored))]
 		private static void TileData_GetExplored(ref bool __result, ref byte playerId)
 		{
@@ -13,13 +20,6 @@ namespace PolyMod
 			{
 				__result = true;
 			}
-		}
-
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(GameManager), nameof(GameManager.Update))]
-		private static void GameManager_Update(GameManager __instance)
-		{
-			Plugin.Update();
 		}
 
 		[HarmonyPrefix]

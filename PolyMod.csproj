@@ -9,12 +9,12 @@
 		https://nuget.bepinex.dev/v3/index.json;
 		https://nuget.samboy.dev/v3/index.json
 	</RestoreAdditionalProjectSources>
-	<Configurations>IL2CPP</Configurations>
+	<Configurations>IL2CPP;Mono</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.674" />
-    <Reference Include="lib\*.dll" />
+    <Reference Include="lib\IL2CPP\*.dll" />
   </ItemGroup>
 
 </Project>
