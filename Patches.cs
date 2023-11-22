@@ -24,9 +24,9 @@ namespace PolyMod
 
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.Generate))]
-		static void MapGenerator_Generate(ref GameState state)
+		static void MapGenerator_Generate(ref GameState state, ref MapGeneratorSettings settings)
 		{
-			MapEditor.PreGenerate(ref state);
+			MapEditor.PreGenerate(ref state, ref settings);
 		}
 
 		[HarmonyPostfix]
@@ -50,6 +50,7 @@ namespace PolyMod
 			Commands.Help();
 		}
 
+		[HarmonyPrefix]
 		[HarmonyPatch(typeof(SettingsScreen), nameof(SettingsScreen.CreateLanguageList))]
 		private static bool SettingsScreen_CreateLanguageList(SettingsScreen __instance, UnityEngine.Transform parent)
 		{
