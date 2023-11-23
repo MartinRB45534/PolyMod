@@ -74,32 +74,5 @@ namespace PolyMod
 
 			return false;
 		}
-
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(SettingsToggleGroup), nameof(SettingsToggleGroup.SetupContainers))]
-		private static void SettingsToggleGroup_SetupContainers(SettingsToggleGroup __instance)
-		{
-			__instance.compactUIContainer.gameObject.SetActive(true);
-			__instance.compactUIContainer.Value = SettingsUtils.UseCompactUI;
-		}
-
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(SettingsUtils), nameof(SettingsUtils.UseCompactUI), MethodType.Getter)]
-		private static void SettingsUtils_UseCompactUI(ref bool __result)
-		{
-			__result = PlayerPrefsUtils.GetBoolValue("useCompactUI", false);
-		}
-
-		// This makes tribe selection popups fullscreen like on mobile if compact UI is on, not sure if we should keep it but it would be funny
-		
-		// [HarmonyPostfix]
-		// [HarmonyPatch(typeof(SelectTribePopup), nameof(SelectTribePopup.OnEnable))]
-		// private static void SelectTribePopup_OnEnable(ref PopupBase __instance)
-		// {
-		// 	if (SettingsUtils.UseCompactUI)
-		// 	{
-		// 		__instance.fullscreenVariant = true;
-		// 	}
-		// }
 	}
 }
