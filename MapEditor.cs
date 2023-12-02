@@ -5,29 +5,42 @@ namespace PolyMod
 {
 	internal static class MapEditor
 	{
-		private static string _mapPath = BepInEx.Paths.BepInExRootPath + "/map.json"; //TODO: file open dialog
+		internal static string mapPath = string.Empty;
 		private static JObject? _mapJson;
 
-		private static JObject GetMapJson() 
+		private static JObject GetMapJson()
 		{
-			return _mapJson ?? JObject.Parse(File.ReadAllText(_mapPath));
+			if (mapPath == string.Empty)
+			{
+				return null;
+			}
+			return _mapJson ?? JObject.Parse(File.ReadAllText(mapPath));
 		}
 
 		internal static void PreGenerate(ref GameState state, ref MapGeneratorSettings settings)
 		{
 			JObject json = GetMapJson();
+			if (json == null)
+			{
+				return;
+			}
+
 			ushort size = (ushort)json["size"];
-			if(size < Plugin.MAP_MIN_SIZE || size > Plugin.MAP_MAX_SIZE) 
+			if (size < Plugin.MAP_MIN_SIZE || size > Plugin.MAP_MAX_SIZE)
 			{
 				throw new Exception($"The map size must be between {Plugin.MAP_MIN_SIZE} and {Plugin.MAP_MAX_SIZE}");
 			}
-			state.Map = new(size,size);
+			state.Map = new(size, size);
 			settings.mapType = PolytopiaBackendBase.Game.MapPreset.Dryland;
 		}
 
 		internal static void PostGenerate(ref GameState state)
 		{
 			JObject json = GetMapJson();
+			if (json == null)
+			{
+				return;
+			}
 			MapData map = state.Map;
 
 			for (int i = 0; i < map.tiles.Length; i++)
@@ -35,7 +48,7 @@ namespace PolyMod
 				TileData tile = map.tiles[i];
 				JToken tileJson = json["map"][i];
 
-				if (tile.rulingCityCoordinates == WorldCoordinates.NULL_COORDINATES) 
+				if (tile.rulingCityCoordinates == WorldCoordinates.NULL_COORDINATES)
 				{
 					tile.resource = tileJson["resource"] == null ? null : new() { type = EnumCache<ResourceData.Type>.GetType((string)tileJson["resource"]) };
 				}
@@ -62,6 +75,7 @@ namespace PolyMod
 				map.tiles[i] = tile;
 			}
 
+			mapPath = string.Empty;
 			_mapJson = null;
 		}
 	}

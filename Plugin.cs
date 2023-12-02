@@ -19,15 +19,29 @@ namespace PolyMod
 		{
 			Harmony.CreateAndPatchAll(typeof(Patches));
 
-			Commands.Add("foghack", delegate 
+			Commands.Add("foghack", string.Empty, (args) =>
 			{
 				foghack = !foghack;
-				DebugConsole.Write($"Foghack status is now {foghack}");
+				DebugConsole.Write($"Foghack is {foghack}");
 			});
-			Commands.Add("currencyhack", delegate
+			Commands.Add("starhack", "[amount]", (args) =>
 			{
-				GameManager.LocalPlayer.Currency += 1000;
-				DebugConsole.Write($"+1000 stars");
+				int amount = 0;
+				if (args.Length > 0)
+				{
+					int.TryParse(args[0], out amount);
+				}
+				GameManager.LocalPlayer.Currency += amount;
+				DebugConsole.Write($"+{amount} stars");
+			});
+			Commands.Add("setmap", "<path>", (args) =>
+			{
+				if (args.Length == 0)
+				{
+					DebugConsole.Write("Wrong args!");
+				}
+				MapEditor.mapPath = args[0];
+				DebugConsole.Write($"Map set");
 			});
 		}
 
@@ -47,7 +61,7 @@ namespace PolyMod
 			}
 		}
 
-		internal static Il2CppReferenceArray<T> ToIl2CppArray<T>(params T[] array) where T : Il2CppObjectBase
+		internal static Il2CppReferenceArray<T> WrapArray<T>(params T[] array) where T : Il2CppObjectBase
 		{
 			return new Il2CppReferenceArray<T>(array);
 		}
