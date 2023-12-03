@@ -48,6 +48,7 @@ namespace PolyMod
 				TileData tile = map.tiles[i];
 				JToken tileJson = json["map"][i];
 
+				if (tileJson["skip"] != null && (bool)tileJson["skip"]) continue;
 				if (tile.rulingCityCoordinates == WorldCoordinates.NULL_COORDINATES)
 				{
 					tile.resource = tileJson["resource"] == null ? null : new() { type = EnumCache<ResourceData.Type>.GetType((string)tileJson["resource"]) };
