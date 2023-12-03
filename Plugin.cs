@@ -43,6 +43,11 @@ namespace PolyMod
 				MapEditor.mapPath = args[0];
 				DebugConsole.Write($"Map set");
 			});
+			Commands.Add("unsetmap", "", (args) =>
+			{
+				MapEditor.mapPath = string.Empty;
+				DebugConsole.Write($"Map unset");
+			});
 		}
 
 		internal static void Update()
