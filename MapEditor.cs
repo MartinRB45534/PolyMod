@@ -8,7 +8,7 @@ namespace PolyMod
 		internal static string mapPath = string.Empty;
 		private static JObject? _mapJson;
 
-		private static JObject GetMapJson()
+		private static JObject? GetMapJson()
 		{
 			if (mapPath == string.Empty)
 			{
@@ -19,7 +19,7 @@ namespace PolyMod
 
 		internal static void PreGenerate(ref GameState state, ref MapGeneratorSettings settings)
 		{
-			JObject json = GetMapJson();
+			JObject? json = GetMapJson();
 			if (json == null)
 			{
 				return;
@@ -36,7 +36,7 @@ namespace PolyMod
 
 		internal static void PostGenerate(ref GameState state)
 		{
-			JObject json = GetMapJson();
+			JObject? json = GetMapJson();
 			if (json == null)
 			{
 				return;

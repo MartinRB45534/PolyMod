@@ -19,11 +19,6 @@ namespace PolyMod
 		{
 			Harmony.CreateAndPatchAll(typeof(Patches));
 
-			Commands.Add("foghack", string.Empty, (args) =>
-			{
-				foghack = !foghack;
-				DebugConsole.Write($"Foghack is {foghack}");
-			});
 			Commands.Add("starhack", "[amount]", (args) =>
 			{
 				int amount = 0;
