@@ -1,6 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
-using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine;
 
@@ -12,41 +12,55 @@ namespace PolyMod
 		internal const uint MAP_MIN_SIZE = 6;
 		internal const uint MAP_MAX_SIZE = 100;
 
+		internal static bool start = false;
 		internal static bool console = false;
-		internal static bool foghack = false;
 
 		public override void Load()
 		{
 			Harmony.CreateAndPatchAll(typeof(Patches));
+		}
 
-			Commands.Add("starhack", "[amount]", (args) =>
+		internal static void Start()
+		{
+			AddCommand("starhack", "[amount]", (args) =>
 			{
-				int amount = 0;
+				int amount = 100;
 				if (args.Length > 0)
 				{
 					int.TryParse(args[0], out amount);
 				}
+
 				GameManager.LocalPlayer.Currency += amount;
+
 				DebugConsole.Write($"+{amount} stars");
 			});
-			Commands.Add("setmap", "<path>", (args) =>
+			AddCommand("setmap", "(path)", (args) =>
 			{
 				if (args.Length == 0)
 				{
 					DebugConsole.Write("Wrong args!");
+					return;
 				}
+
 				MapEditor.mapPath = args[0];
+
 				DebugConsole.Write($"Map set");
 			});
-			Commands.Add("unsetmap", "", (args) =>
+			AddCommand("unsetmap", "", (args) =>
 			{
 				MapEditor.mapPath = string.Empty;
+
 				DebugConsole.Write($"Map unset");
 			});
 		}
 
 		internal static void Update()
 		{
+			if (!start)
+			{
+				Start();
+				start = true;
+			}
 			if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Tab))
 			{
 				if (console)
@@ -61,9 +75,9 @@ namespace PolyMod
 			}
 		}
 
-		internal static Il2CppReferenceArray<T> WrapArray<T>(params T[] array) where T : Il2CppObjectBase
+		internal static void AddCommand(string name, string description, Action<Il2CppStringArray> container)
 		{
-			return new Il2CppReferenceArray<T>(array);
+			DebugConsole.AddCommand(name, DelegateSupport.ConvertDelegate<DebugConsole.CommandDelegate>(container), description);
 		}
 	}
 }

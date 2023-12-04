@@ -11,17 +11,6 @@ namespace PolyMod
 			Plugin.Update();
 		}
 
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(TileData), nameof(TileData.GetExplored))]
-		private static void TileData_GetExplored(ref bool __result, ref byte playerId)
-		{
-			if (GameManager.LocalPlayer == null) return;
-			if (Plugin.foghack && playerId == GameManager.LocalPlayer.Id)
-			{
-				__result = true;
-			}
-		}
-
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.Generate))]
 		static void MapGenerator_Generate(ref GameState state, ref MapGeneratorSettings settings)
@@ -34,20 +23,6 @@ namespace PolyMod
 		private static void MapGenerator_Generate_(ref GameState state)
 		{
 			MapEditor.PostGenerate(ref state);
-		}
-
-		[HarmonyPrefix]
-		[HarmonyPatch(typeof(DebugConsole), nameof(DebugConsole.ExecuteCommand))]
-		private static bool DebugConsole_ExecuteCommand(ref string command)
-		{
-			return !Commands.Execute(command);
-		}
-
-		[HarmonyPostfix]
-		[HarmonyPatch(typeof(DebugConsole), nameof(DebugConsole.CmdHelp))]
-		private static void DebugConsole_CmdHelp()
-		{
-			Commands.Help();
 		}
 
 		[HarmonyPrefix]
