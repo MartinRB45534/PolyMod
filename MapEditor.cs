@@ -73,6 +73,24 @@ namespace PolyMod
 				tile.skinType = tileJson["skinType"] == null ? SkinType.Default : EnumCache<SkinType>.GetType((string)tileJson["skinType"]);
 				tile.terrain = tileJson["terrain"] == null ? TerrainData.Type.None : EnumCache<TerrainData.Type>.GetType((string)tileJson["terrain"]);
 
+				switch (tile.terrain)
+				{
+					case TerrainData.Type.Water:
+						tile.altitude = -1;
+						break;
+					case TerrainData.Type.Ocean:
+					case TerrainData.Type.Ice:
+						tile.altitude = -2;
+						break;
+					case TerrainData.Type.Field:
+					case TerrainData.Type.Forest:
+						tile.altitude = 1;
+						break;
+					case TerrainData.Type.Mountain:
+						tile.altitude = 2;
+						break;
+				}
+
 				map.tiles[i] = tile;
 			}
 
