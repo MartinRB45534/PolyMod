@@ -5,27 +5,16 @@ namespace PolyMod
 {
 	internal static class MapEditor
 	{
-		internal static string mapPath = string.Empty;
-		private static JObject? _mapJson;
-
-		private static JObject? GetMapJson()
-		{
-			if (mapPath == string.Empty)
-			{
-				return null;
-			}
-			return _mapJson ?? JObject.Parse(File.ReadAllText(mapPath));
-		}
+		internal static JObject? map;
 
 		internal static void PreGenerate(ref GameState state, ref MapGeneratorSettings settings)
 		{
-			JObject? json = GetMapJson();
-			if (json == null)
+			if (map == null)
 			{
 				return;
 			}
 
-			ushort size = (ushort)json["size"];
+			ushort size = (ushort)map["size"];
 			if (size < Plugin.MAP_MIN_SIZE || size > Plugin.MAP_MAX_SIZE)
 			{
 				throw new Exception($"The map size must be between {Plugin.MAP_MIN_SIZE} and {Plugin.MAP_MAX_SIZE}");
@@ -36,17 +25,16 @@ namespace PolyMod
 
 		internal static void PostGenerate(ref GameState state)
 		{
-			JObject? json = GetMapJson();
-			if (json == null)
+			if (map == null)
 			{
 				return;
 			}
-			MapData map = state.Map;
+			MapData originalMap = state.Map;
 
-			for (int i = 0; i < map.tiles.Length; i++)
+			for (int i = 0; i < originalMap.tiles.Length; i++)
 			{
-				TileData tile = map.tiles[i];
-				JToken tileJson = json["map"][i];
+				TileData tile = originalMap.tiles[i];
+				JToken tileJson = map["map"][i];
 
 				if (tileJson["skip"] != null && (bool)tileJson["skip"]) continue;
 				if (tile.rulingCityCoordinates == WorldCoordinates.NULL_COORDINATES)
@@ -73,11 +61,10 @@ namespace PolyMod
 				tile.skinType = tileJson["skinType"] == null ? SkinType.Default : EnumCache<SkinType>.GetType((string)tileJson["skinType"]);
 				tile.terrain = tileJson["terrain"] == null ? TerrainData.Type.None : EnumCache<TerrainData.Type>.GetType((string)tileJson["terrain"]);
 
-				map.tiles[i] = tile;
+				originalMap.tiles[i] = tile;
 			}
 
-			mapPath = string.Empty;
-			_mapJson = null;
+			map = null;
 		}
 	}
 }

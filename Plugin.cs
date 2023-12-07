@@ -2,6 +2,7 @@
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace PolyMod
@@ -22,7 +23,7 @@ namespace PolyMod
 
 		internal static void Start()
 		{
-			AddCommand("starhack", "[amount]", (args) =>
+			AddCommand("hack_stars", "[amount]", (args) =>
 			{
 				int amount = 100;
 				if (args.Length > 0)
@@ -34,7 +35,7 @@ namespace PolyMod
 
 				DebugConsole.Write($"+{amount} stars");
 			});
-			AddCommand("setmap", "(path)", (args) =>
+			AddCommand("map_set", "(path)", (args) =>
 			{
 				if (args.Length == 0)
 				{
@@ -42,13 +43,13 @@ namespace PolyMod
 					return;
 				}
 
-				MapEditor.mapPath = args[0];
+				MapEditor.map = JObject.Parse(File.ReadAllText(args[0]));
 
 				DebugConsole.Write($"Map set");
 			});
-			AddCommand("unsetmap", "", (args) =>
+			AddCommand("map_unset", "", (args) =>
 			{
-				MapEditor.mapPath = string.Empty;
+				MapEditor.map = null;
 
 				DebugConsole.Write($"Map unset");
 			});
