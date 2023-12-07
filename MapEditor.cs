@@ -5,16 +5,16 @@ namespace PolyMod
 {
 	internal static class MapEditor
 	{
-		internal static JObject? map;
+		internal static JObject? customMap;
 
 		internal static void PreGenerate(ref GameState state, ref MapGeneratorSettings settings)
 		{
-			if (map == null)
+			if (customMap == null)
 			{
 				return;
 			}
 
-			ushort size = (ushort)map["size"];
+			ushort size = (ushort)customMap["size"];
 			if (size < Plugin.MAP_MIN_SIZE || size > Plugin.MAP_MAX_SIZE)
 			{
 				throw new Exception($"The map size must be between {Plugin.MAP_MIN_SIZE} and {Plugin.MAP_MAX_SIZE}");
@@ -25,16 +25,16 @@ namespace PolyMod
 
 		internal static void PostGenerate(ref GameState state)
 		{
-			if (map == null)
+			if (customMap == null)
 			{
 				return;
 			}
-			MapData originalMap = state.Map;
+			MapData map = state.Map;
 
-			for (int i = 0; i < originalMap.tiles.Length; i++)
+			for (int i = 0; i < map.tiles.Length; i++)
 			{
-				TileData tile = originalMap.tiles[i];
-				JToken tileJson = map["map"][i];
+				TileData tile = map.tiles[i];
+				JToken tileJson = customMap["map"][i];
 
 				if (tileJson["skip"] != null && (bool)tileJson["skip"]) continue;
 				if (tile.rulingCityCoordinates == WorldCoordinates.NULL_COORDINATES)
@@ -61,10 +61,28 @@ namespace PolyMod
 				tile.skinType = tileJson["skinType"] == null ? SkinType.Default : EnumCache<SkinType>.GetType((string)tileJson["skinType"]);
 				tile.terrain = tileJson["terrain"] == null ? TerrainData.Type.None : EnumCache<TerrainData.Type>.GetType((string)tileJson["terrain"]);
 
-				originalMap.tiles[i] = tile;
+				switch (tile.terrain)
+				{
+					case TerrainData.Type.Water:
+						tile.altitude = -1;
+						break;
+					case TerrainData.Type.Ocean:
+					case TerrainData.Type.Ice:
+						tile.altitude = -2;
+						break;
+					case TerrainData.Type.Field:
+					case TerrainData.Type.Forest:
+						tile.altitude = 1;
+						break;
+					case TerrainData.Type.Mountain:
+						tile.altitude = 2;
+						break;
+				}
+
+				map.tiles[i] = tile;
 			}
 
-			map = null;
+			customMap = null;
 		}
 	}
 }
