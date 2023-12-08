@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using UnityEngine;
 
 namespace PolyMod
 {
@@ -23,6 +24,17 @@ namespace PolyMod
 		private static void MapGenerator_Generate_(ref GameState state)
 		{
 			MapEditor.PostGenerate(ref state);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(CameraController), nameof(CameraController.Awake))]
+		private static void CameraController_Awake()
+		{
+			CameraController.Instance.maxZoom = Plugin.CAMERA_CONSTANT;
+			CameraController.Instance.techViewBounds = new(
+				new(Plugin.CAMERA_CONSTANT, Plugin.CAMERA_CONSTANT), CameraController.Instance.techViewBounds.size
+			);
+			GameObject.Find("TechViewWorldSpace").transform.position = new(Plugin.CAMERA_CONSTANT, Plugin.CAMERA_CONSTANT);
 		}
 
 		[HarmonyPrefix]
