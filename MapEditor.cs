@@ -7,14 +7,42 @@ namespace PolyMod
 	{
 		internal static JObject? customMap;
 
+		internal static Il2CppSystem.Collections.Generic.List<int> GetCapitals(Il2CppSystem.Collections.Generic.List<int> capitals, int width, int playerCount)
+		{
+			if (customMap == null || customMap["capitals"] == null)
+			{
+				return capitals;
+			}
+
+			Il2CppSystem.Collections.Generic.List<int> list = new();
+			int i = 0;
+			while (true)
+			{
+				try
+				{
+					list.Add((int)customMap["capitals"][i++]);
+				}
+				catch (Exception)
+				{
+					break;
+				}
+			}
+			if (list.Count < capitals.Count)
+			{
+				throw new Exception("Too few capitals provided");
+			}
+			list.RemoveRange(capitals.Count, list.Count - capitals.Count);
+			return list;
+		}
+
 		internal static void PreGenerate(ref GameState state, ref MapGeneratorSettings settings)
 		{
 			if (customMap == null)
 			{
 				return;
 			}
-
 			ushort size = (ushort)customMap["size"];
+
 			if (size < Plugin.MAP_MIN_SIZE || size > Plugin.MAP_MAX_SIZE)
 			{
 				throw new Exception($"The map size must be between {Plugin.MAP_MIN_SIZE} and {Plugin.MAP_MAX_SIZE}");

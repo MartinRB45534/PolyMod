@@ -26,6 +26,13 @@ namespace PolyMod
 		}
 
 		[HarmonyPostfix]
+		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.GeneratePlayerCapitalPositions))]
+		private static void MapGenerator_GeneratePlayerCapitalPositions(ref Il2CppSystem.Collections.Generic.List<int> __result, int width, int playerCount)
+		{
+			__result = MapEditor.GetCapitals(__result, width, playerCount);
+		}
+
+		[HarmonyPostfix]
 		[HarmonyPatch(typeof(CameraController), nameof(CameraController.Awake))]
 		private static void CameraController_Awake()
 		{
