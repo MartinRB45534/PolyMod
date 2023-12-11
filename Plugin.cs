@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PolyMod
 {
-	[BepInPlugin("com.polymod", "PolyMod", "1.0.0.0")]
+	[BepInPlugin("com.polymod", "PolyMod", "0.0.0")]
 	public class Plugin : BepInEx.Unity.IL2CPP.BasePlugin
 	{
 		internal const uint MAP_MIN_SIZE = 6;
