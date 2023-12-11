@@ -9,7 +9,8 @@ namespace PolyMod
 	{
 		internal const uint MAP_MIN_SIZE = 6;
 		internal const uint MAP_MAX_SIZE = 100;
-		internal const uint CAMERA_CONSTANT = 1000;
+		internal const int MAP_MAX_PLAYERS = 100;
+		internal const int CAMERA_CONSTANT = 1000;
 
 		internal static bool start = false;
 

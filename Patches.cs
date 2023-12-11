@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using UnityEngine;
 
 namespace PolyMod
 {
@@ -30,6 +31,27 @@ namespace PolyMod
 		private static void MapGenerator_GeneratePlayerCapitalPositions(ref Il2CppSystem.Collections.Generic.List<int> __result, int width, int playerCount)
 		{
 			__result = MapEditor.GetCapitals(__result, width, playerCount);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(GameManager), nameof(GameManager.GetMaxOpponents))]
+		private static void GameManager_GetMaxOpponents(ref int __result)
+		{
+			__result = Plugin.MAP_MAX_PLAYERS - 1;
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(MapDataExtensions), nameof(MapDataExtensions.GetMaximumOpponentCountForMapSize))]
+		private static void MapDataExtensions_GetMaximumOpponentCountForMapSize(ref int __result)
+		{
+			__result = Plugin.MAP_MAX_PLAYERS;
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(PurchaseManager), nameof(PurchaseManager.GetUnlockedTribeCount))]
+		private static void PurchaseManager_GetUnlockedTribeCount(ref int __result)
+		{
+			__result = Plugin.MAP_MAX_PLAYERS + 2;
 		}
 
 		[HarmonyPostfix]
