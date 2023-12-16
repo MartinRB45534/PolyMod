@@ -1,5 +1,4 @@
-﻿using EnumsNET;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Newtonsoft.Json.Linq;
 using Polytopia.Data;
 

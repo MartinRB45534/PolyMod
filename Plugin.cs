@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace PolyMod
@@ -37,6 +38,11 @@ namespace PolyMod
 			{
 				DevConsole.Toggle();
 			}
+		}
+
+		internal static string GetJTokenName(JToken token)
+		{
+			return token.Path.Split('.')[^1];
 		}
 	}
 }

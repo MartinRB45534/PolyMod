@@ -21,12 +21,14 @@ namespace PolyMod
 					{
 						JObject patch = JObject.Parse(new StreamReader(entry.Open()).ReadToEnd());
 
-						foreach (JToken token in patch.SelectTokens("$.*.*").ToArray()) 
+						foreach (JToken token in patch.SelectTokens("$.*.*").ToArray())
 						{
-							if (token["idx"] != null && (int)token["idx"] == -1) 
+							JObject jobject = token.Cast<JObject>();
+							if (jobject["idx"] != null && (int)jobject["idx"] == -1)
 							{
 								patch.SelectToken(token.Path)["idx"] = --idx;
-								EnumCache<UnitData.Type>.AddMapping(token.Path.Split('.')[^1], (UnitData.Type)idx);
+								jobject["idx"] = --idx;
+								EnumCache<UnitData.Type>.AddMapping(Plugin.GetJTokenName(jobject), (UnitData.Type)idx);
 							}
 						}
 
