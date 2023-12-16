@@ -5,43 +5,36 @@ namespace PolyMod
 {
 	internal static class MapEditor
 	{
-		internal static JObject? customMap;
+		internal static JObject? map;
 
-		internal static Il2CppSystem.Collections.Generic.List<int> GetCapitals(Il2CppSystem.Collections.Generic.List<int> capitals, int width, int playerCount)
+		internal static Il2CppSystem.Collections.Generic.List<int> GetCapitals(Il2CppSystem.Collections.Generic.List<int> originalCapitals, int width, int playerCount)
 		{
-			if (customMap == null || customMap["capitals"] == null)
+			if (map == null || map["capitals"] == null)
 			{
-				return capitals;
+				return originalCapitals;
 			}
 
-			Il2CppSystem.Collections.Generic.List<int> list = new();
-			int i = 0;
-			while (true)
+			JArray jcapitals = map["capitals"].Cast<JArray>();
+			Il2CppSystem.Collections.Generic.List<int> capitals = new();
+			for (int i = 0; i < jcapitals.Count; i++)
 			{
-				try
-				{
-					list.Add((int)customMap["capitals"][i++]);
-				}
-				catch (Exception)
-				{
-					break;
-				}
+				capitals.Add((int)jcapitals[i]);
 			}
-			if (list.Count < capitals.Count)
+
+			if (capitals.Count < originalCapitals.Count)
 			{
 				throw new Exception("Too few capitals provided");
 			}
-			list.RemoveRange(capitals.Count, list.Count - capitals.Count);
-			return list;
+			return capitals.GetRange(0, originalCapitals.Count);
 		}
 
 		internal static void PreGenerate(ref GameState state, ref MapGeneratorSettings settings)
 		{
-			if (customMap == null)
+			if (map == null)
 			{
 				return;
 			}
-			ushort size = (ushort)customMap["size"];
+			ushort size = (ushort)map["size"];
 
 			if (size < Plugin.MAP_MIN_SIZE || size > Plugin.MAP_MAX_SIZE)
 			{
@@ -53,16 +46,16 @@ namespace PolyMod
 
 		internal static void PostGenerate(ref GameState state)
 		{
-			if (customMap == null)
+			if (map == null)
 			{
 				return;
 			}
-			MapData map = state.Map;
+			MapData originalMap = state.Map;
 
-			for (int i = 0; i < map.tiles.Length; i++)
+			for (int i = 0; i < originalMap.tiles.Length; i++)
 			{
-				TileData tile = map.tiles[i];
-				JToken tileJson = customMap["map"][i];
+				TileData tile = originalMap.tiles[i];
+				JToken tileJson = map["map"][i];
 
 				if (tileJson["skip"] != null && (bool)tileJson["skip"]) continue;
 				if (tile.rulingCityCoordinates == WorldCoordinates.NULL_COORDINATES)
@@ -107,10 +100,10 @@ namespace PolyMod
 						break;
 				}
 
-				map.tiles[i] = tile;
+				originalMap.tiles[i] = tile;
 			}
 
-			customMap = null;
+			map = null;
 		}
 	}
 }

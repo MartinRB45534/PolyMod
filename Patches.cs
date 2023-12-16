@@ -1,5 +1,7 @@
-﻿using HarmonyLib;
-using UnityEngine;
+﻿using EnumsNET;
+using HarmonyLib;
+using Newtonsoft.Json.Linq;
+using Polytopia.Data;
 
 namespace PolyMod
 {
@@ -52,6 +54,13 @@ namespace PolyMod
 		private static void PurchaseManager_GetUnlockedTribeCount(ref int __result)
 		{
 			__result = Plugin.MAP_MAX_PLAYERS + 2;
+		}
+
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(GameLogicData), nameof(GameLogicData.AddGameLogicPlaceholders))]
+		private static void GameLogicData_Parse(JObject rootObject)
+		{
+			ModLoader.Init(rootObject);
 		}
 
 		[HarmonyPostfix]

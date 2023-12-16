@@ -30,13 +30,13 @@ namespace PolyMod
 					return;
 				}
 
-				MapEditor.customMap = JObject.Parse(File.ReadAllText(args[0]));
+				MapEditor.map = JObject.Parse(File.ReadAllText(args[0]));
 
 				DebugConsole.Write($"Map set");
 			});
 			AddCommand("map_unset", "", (args) =>
 			{
-				MapEditor.customMap = null;
+				MapEditor.map = null;
 
 				DebugConsole.Write($"Map unset");
 			});

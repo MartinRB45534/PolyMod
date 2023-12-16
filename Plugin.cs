@@ -11,6 +11,7 @@ namespace PolyMod
 		internal const uint MAP_MAX_SIZE = 100;
 		internal const int MAP_MAX_PLAYERS = 100;
 		internal const int CAMERA_CONSTANT = 1000;
+		internal static readonly string MODS_PATH = Path.Combine(BepInEx.Paths.BepInExRootPath, "..", "Mods/");
 
 		internal static bool start = false;
 
@@ -36,6 +37,20 @@ namespace PolyMod
 			{
 				DevConsole.Toggle();
 			}
+		}
+
+		internal static void PatchEnum<T>(string name, int idx) where T : struct, IComparable, IFormattable, IConvertible
+		{
+			if (EnumCache<T>.nameMap == null) 
+			{
+				EnumCache<T>.nameMap = new();
+			}
+			if (EnumCache<T>.typeMap == null)
+			{
+				EnumCache<T>.typeMap = new();
+			}
+			EnumCache<T>.nameMap.TryAdd((T)(object)idx, name);
+			EnumCache<T>.typeMap.TryAdd(name, (T)(object)idx);
 		}
 	}
 }
