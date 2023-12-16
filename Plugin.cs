@@ -38,19 +38,5 @@ namespace PolyMod
 				DevConsole.Toggle();
 			}
 		}
-
-		internal static void PatchEnum<T>(string name, int idx) where T : struct, IComparable, IFormattable, IConvertible
-		{
-			if (EnumCache<T>.nameMap == null) 
-			{
-				EnumCache<T>.nameMap = new();
-			}
-			if (EnumCache<T>.typeMap == null)
-			{
-				EnumCache<T>.typeMap = new();
-			}
-			EnumCache<T>.nameMap.TryAdd((T)(object)idx, name);
-			EnumCache<T>.typeMap.TryAdd(name, (T)(object)idx);
-		}
 	}
 }
