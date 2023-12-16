@@ -1,4 +1,5 @@
-﻿using Il2CppSystem.Linq;
+﻿using I2.Loc;
+using Il2CppSystem.Linq;
 using Newtonsoft.Json.Linq;
 using Polytopia.Data;
 using System.IO.Compression;
@@ -26,7 +27,6 @@ namespace PolyMod
 							JObject jobject = token.Cast<JObject>();
 							if (jobject["idx"] != null && (int)jobject["idx"] == -1)
 							{
-								patch.SelectToken(token.Path)["idx"] = --idx;
 								jobject["idx"] = --idx;
 								EnumCache<UnitData.Type>.AddMapping(Plugin.GetJTokenName(jobject), (UnitData.Type)idx);
 							}
