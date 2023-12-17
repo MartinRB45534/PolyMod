@@ -40,9 +40,9 @@ namespace PolyMod
 			}
 		}
 
-		internal static string GetJTokenName(JToken token)
+		internal static string GetJTokenName(JToken token, int n = 1)
 		{
-			return token.Path.Split('.')[^1];
+			return token.Path.Split('.')[^n];
 		}
 	}
 }
