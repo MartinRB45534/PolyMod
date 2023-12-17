@@ -53,9 +53,8 @@ namespace PolyMod
 										break;
 								}
 							}
-
-							gld.Merge(patch);
 						}
+						gld.Merge(patch);
 					}
 				}
 			}
