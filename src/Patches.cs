@@ -55,6 +55,13 @@ namespace PolyMod
 			__result = Plugin.MAP_MAX_PLAYERS + 2;
 		}
 
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(PurchaseManager), nameof(PurchaseManager.IsTribeUnlocked))]
+		private static void PurchaseManager_IsTribeUnlocked(ref bool __result, TribeData.Type type)
+		{
+			__result = (int)type < 0 || __result;
+		}
+
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(GameLogicData), nameof(GameLogicData.AddGameLogicPlaceholders))]
 		private static void GameLogicData_Parse(JObject rootObject)
