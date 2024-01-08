@@ -1,6 +1,6 @@
 ﻿# PolyMod
 
-![](https://img.shields.io/github/downloads/IExploitableMan/PolyMod/total) ![](https://img.shields.io/github/stars/IExploitableMan/PolyMod) ![](https://img.shields.io/github/repo-size/IExploitableMan/PolyMod)
+![](https://img.shields.io/github/downloads/IExploitableMan/PolyMod/total) ![](https://img.shields.io/codefactor/grade/github/IExploitableMan/PolyMod) ![](https://img.shields.io/github/repo-size/IExploitableMan/PolyMod)
 
 ## Requirements
 
