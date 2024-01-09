@@ -58,10 +58,6 @@ namespace PolyMod
 				JToken tileJson = map["map"][i];
 
 				if (tileJson["skip"] != null && (bool)tileJson["skip"]) continue;
-				if (tile.rulingCityCoordinates == WorldCoordinates.NULL_COORDINATES)
-				{
-					tile.resource = tileJson["resource"] == null ? null : new() { type = EnumCache<ResourceData.Type>.GetType((string)tileJson["resource"]) };
-				}
 				if (tile.rulingCityCoordinates != tile.coordinates)
 				{
 					tile.improvement = tileJson["improvement"] == null ? null : new() { type = EnumCache<ImprovementData.Type>.GetType((string)tileJson["improvement"]) };

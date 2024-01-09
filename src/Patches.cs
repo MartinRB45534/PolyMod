@@ -6,7 +6,6 @@ namespace PolyMod
 {
 	internal class Patches
 	{
-
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(GameStateUtils), nameof(GameStateUtils.GetRandomPickableTribe), new System.Type[] { typeof(GameState) })]
 		public static bool GameStateUtils_GetRandomPickableTribe(GameState gameState)
