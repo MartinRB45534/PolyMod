@@ -3,7 +3,7 @@ using Polytopia.Data;
 
 namespace PolyMod
 {
-	internal static class MapEditor
+	internal static class MapLoader
 	{
 		internal static JObject? map;
 

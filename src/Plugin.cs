@@ -22,14 +22,14 @@ namespace PolyMod
 
 		public override void Load()
 		{
-			Harmony.CreateAndPatchAll(typeof(Patches));
+			Harmony.CreateAndPatchAll(typeof(Patcher));
 		}
 
 		internal static void Start()
 		{
 			Directory.CreateDirectory(MODS_PATH);
 			Directory.CreateDirectory(MAPS_PATH);
-			DevConsole.Init();
+			DeveloperConsole.Init();
 		}
 
 		internal static void Update()
@@ -42,7 +42,7 @@ namespace PolyMod
 
 			if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Tab))
 			{
-				DevConsole.Toggle();
+				DeveloperConsole.Toggle();
 			}
 		}
 

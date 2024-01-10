@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 
 namespace PolyMod
 {
-	internal class DevConsole
+	internal class DeveloperConsole
 	{
 		private static bool _console = false;
 
@@ -30,12 +30,12 @@ namespace PolyMod
 					return;
 				}
 
-				MapEditor.map = JObject.Parse(File.ReadAllText(Path.Combine(Plugin.MAPS_PATH, args[0] + ".json")));
+				MapLoader.map = JObject.Parse(File.ReadAllText(Path.Combine(Plugin.MAPS_PATH, args[0] + ".json")));
 				DebugConsole.Write($"Map set");
 			});
 			AddCommand("map_unset", "", (args) =>
 			{
-				MapEditor.map = null;
+				MapLoader.map = null;
 				DebugConsole.Write($"Map unset");
 			});
 			AddCommand("version_change", "(version)", (args) =>

@@ -4,7 +4,7 @@ using Polytopia.Data;
 
 namespace PolyMod
 {
-	internal class Patches
+	internal class Patcher
 	{
 		[HarmonyPrefix]
 		[HarmonyPatch(typeof(GameStateUtils), nameof(GameStateUtils.GetRandomPickableTribe), new System.Type[] { typeof(GameState) })]
@@ -30,21 +30,21 @@ namespace PolyMod
 		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.Generate))]
 		static void MapGenerator_Generate(ref GameState state, ref MapGeneratorSettings settings)
 		{
-			MapEditor.PreGenerate(ref state, ref settings);
+			MapLoader.PreGenerate(ref state, ref settings);
 		}
 
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.Generate))]
 		private static void MapGenerator_Generate_(ref GameState state)
 		{
-			MapEditor.PostGenerate(ref state);
+			MapLoader.PostGenerate(ref state);
 		}
 
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(MapGenerator), nameof(MapGenerator.GeneratePlayerCapitalPositions))]
 		private static void MapGenerator_GeneratePlayerCapitalPositions(ref Il2CppSystem.Collections.Generic.List<int> __result, int width, int playerCount)
 		{
-			__result = MapEditor.GetCapitals(__result, width, playerCount);
+			__result = MapLoader.GetCapitals(__result, width, playerCount);
 		}
 
 		[HarmonyPostfix]
