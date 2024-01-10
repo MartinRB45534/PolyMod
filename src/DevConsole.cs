@@ -10,40 +10,43 @@ namespace PolyMod
 
 		internal static void Init()
 		{
-			AddCommand("hack_stars", "[amount]", (args) =>
+			AddCommand("stars_get", "(amount)", (args) =>
 			{
-				int amount = 100;
-				if (args.Length > 0)
+				if (args.Length < 1)
 				{
-					int.TryParse(args[0], out amount);
-				}
-
-				GameManager.LocalPlayer.Currency += amount;
-
-				DebugConsole.Write($"+{amount} stars");
-			});
-			AddCommand("map_set", "(path)", (args) =>
-			{
-				if (args.Length == 0)
-				{
-					DebugConsole.Write("Wrong args!");
+					DebugConsole.Write("Too few args!");
 					return;
 				}
 
-				MapEditor.map = JObject.Parse(File.ReadAllText(args[0]));
+				int amount = int.Parse(args[0]);
+				GameManager.LocalPlayer.Currency += amount;
+				DebugConsole.Write($"+{amount} stars");
+			});
+			AddCommand("map_set", "(name)", (args) =>
+			{
+				if (args.Length < 1)
+				{
+					DebugConsole.Write("Too few args!");
+					return;
+				}
 
+				MapEditor.map = JObject.Parse(File.ReadAllText(Path.Combine(Plugin.MAPS_PATH, args[0] + ".json")));
 				DebugConsole.Write($"Map set");
 			});
 			AddCommand("map_unset", "", (args) =>
 			{
 				MapEditor.map = null;
-
 				DebugConsole.Write($"Map unset");
 			});
-			AddCommand("version_change", "Changes the version of the next singleplayer game", (args) =>
+			AddCommand("version_change", "(version)", (args) =>
 			{
-				Plugin.version = int.Parse(args[0].ToString());
+				if (args.Length < 1)
+				{
+					DebugConsole.Write("Too few args!");
+					return;
+				}
 
+				Plugin.version = int.Parse(args[0].ToString());
 				DebugConsole.Write($"Next game will start with version {Plugin.version}");
 			});
 		}

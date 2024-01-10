@@ -12,7 +12,9 @@ namespace PolyMod
 		internal const uint MAP_MAX_SIZE = 100;
 		internal const int MAP_MAX_PLAYERS = 100;
 		internal const int CAMERA_CONSTANT = 1000;
-		internal static readonly string MODS_PATH = Path.Combine(BepInEx.Paths.BepInExRootPath, "..", "Mods/");
+		internal static readonly string BASE_PATH = Path.Combine(BepInEx.Paths.BepInExRootPath, "..");
+		internal static readonly string MODS_PATH = Path.Combine(BASE_PATH, "Mods");
+		internal static readonly string MAPS_PATH = Path.Combine(BASE_PATH, "Maps");
 
 		internal static int version = -1;
 
@@ -25,6 +27,8 @@ namespace PolyMod
 
 		internal static void Start()
 		{
+			Directory.CreateDirectory(MODS_PATH);
+			Directory.CreateDirectory(MAPS_PATH);
 			DevConsole.Init();
 		}
 

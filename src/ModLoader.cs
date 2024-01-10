@@ -1,4 +1,8 @@
-﻿using Il2CppSystem.Linq;
+﻿using DG.Tweening.Plugins;
+using HarmonyLib;
+using I2.Loc;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppSystem.Linq;
 using Newtonsoft.Json.Linq;
 using Polytopia.Data;
 using System.IO.Compression;
@@ -9,7 +13,6 @@ namespace PolyMod
 	{
 		internal static void Init(JObject gld)
 		{
-			Directory.CreateDirectory(Plugin.MODS_PATH);
 			int idx = 0;
 
 			foreach (string path in Directory.GetFiles(Plugin.MODS_PATH, "*.polymod"))
@@ -20,15 +23,28 @@ namespace PolyMod
 					{
 						JObject patch = JObject.Parse(new StreamReader(entry.Open()).ReadToEnd());
 
-						foreach (JToken token in patch.SelectTokens("$.*.*").ToArray())
+						foreach (JToken jtoken in patch.SelectTokens("$.localizationData.*").ToArray())
 						{
-							JObject jobject = token.Cast<JObject>();
-
-							if (jobject["idx"] != null && (int)jobject["idx"] == -1)
+							JArray token = jtoken.Cast<JArray>();
+							TermData term = LocalizationManager.Sources[0].AddTerm(Plugin.GetJTokenName(token).Replace('_', '.'));
+							List<string> strings = new();
+							for (int i = 0; i < token.Count; i++)
 							{
-								jobject["idx"] = --idx;
-								string id = Plugin.GetJTokenName(jobject);
-								switch (Plugin.GetJTokenName(jobject, 2))
+								strings.Add((string)token[i]);
+							}
+							term.Languages = new Il2CppStringArray(strings.ToArray());
+						}
+						patch.Remove("localizationData");
+
+						foreach (JToken jtoken in patch.SelectTokens("$.*.*").ToArray())
+						{
+							JObject token = jtoken.Cast<JObject>();
+
+							if (token["idx"] != null && (int)token["idx"] == -1)
+							{
+								token["idx"] = --idx;
+								string id = Plugin.GetJTokenName(token);
+								switch (Plugin.GetJTokenName(token, 2))
 								{
 									case "tribeData":
 										EnumCache<TribeData.Type>.AddMapping(id, (TribeData.Type)idx);
@@ -54,6 +70,7 @@ namespace PolyMod
 								}
 							}
 						}
+
 						gld.Merge(patch);
 					}
 				}
