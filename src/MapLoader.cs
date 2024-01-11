@@ -81,8 +81,7 @@ namespace PolyMod
 
 				if (tile.rulingCityCoordinates == tile.coordinates && map["autoTribe"] != null && (bool)map["autoTribe"])
 				{
-					PlayerState player;
-					state.TryGetPlayer(tile.owner, out player);
+					state.TryGetPlayer(tile.owner, out PlayerState player);
 					if (player == null)
 					{
 						throw new Exception($"Player {tile.owner} does not exist");
