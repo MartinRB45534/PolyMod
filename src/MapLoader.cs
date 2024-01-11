@@ -79,6 +79,67 @@ namespace PolyMod
 				tile.terrain = tileJson["terrain"] == null ? TerrainData.Type.None : EnumCache<TerrainData.Type>.GetType((string)tileJson["terrain"]);
 				tile.resource = tileJson["resource"] == null ? null : new() { type = EnumCache<ResourceData.Type>.GetType((string)tileJson["resource"]) };
 
+				if (tile.rulingCityCoordinates == tile.coordinates && map["autoTribe"] != null && (bool)map["autoTribe"])
+				{
+					PlayerState player;
+					state.TryGetPlayer(tile.owner, out player);
+					if (player == null)
+					{
+						throw new Exception($"Player {tile.owner} does not exist");
+					}
+					switch (tile.climate)
+					{
+						case 1:
+							player.tribe = TribeData.Type.Xinxi;
+							break;
+						case 2:
+							player.tribe = TribeData.Type.Imperius;
+							break;
+						case 3:
+							player.tribe = TribeData.Type.Bardur;
+							break;
+						case 4:
+							player.tribe = TribeData.Type.Oumaji;
+							break;
+						case 5:
+							player.tribe = TribeData.Type.Kickoo;
+							break;
+						case 6:
+							player.tribe = TribeData.Type.Hoodrick;
+							break;
+						case 7:
+							player.tribe = TribeData.Type.Luxidoor;
+							break;
+						case 8:
+							player.tribe = TribeData.Type.Vengir;
+							break;
+						case 9:
+							player.tribe = TribeData.Type.Zebasi;
+							break;
+						case 10:
+							player.tribe = TribeData.Type.Aimo;
+							break;
+						case 11:
+							player.tribe = TribeData.Type.Aquarion;
+							break;
+						case 12:
+							player.tribe = TribeData.Type.Quetzali;
+							break;
+						case 13:
+							player.tribe = TribeData.Type.Elyrion;
+							break;
+						case 14:
+							player.tribe = TribeData.Type.Yadakk;
+							break;
+						case 15:
+							player.tribe = TribeData.Type.Polaris;
+							break;
+						case 16:
+							player.tribe = TribeData.Type.Cymanti;
+							break;
+					}
+				}
+
 				switch (tile.terrain)
 				{
 					case TerrainData.Type.Water:
