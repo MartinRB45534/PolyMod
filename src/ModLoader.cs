@@ -1,6 +1,4 @@
-﻿using DG.Tweening.Plugins;
-using HarmonyLib;
-using I2.Loc;
+﻿using I2.Loc;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Linq;
 using Newtonsoft.Json.Linq;
@@ -60,6 +58,7 @@ namespace PolyMod
 										break;
 									case "improvementData":
 										EnumCache<ImprovementData.Type>.AddMapping(id, (ImprovementData.Type)idx);
+										PrefabManager.improvements.Add((ImprovementData.Type)idx, PrefabManager.instance.improvementPrefabs[11].prefab);
 										break;
 									case "unitData":
 										EnumCache<UnitData.Type>.AddMapping(id, (UnitData.Type)idx);

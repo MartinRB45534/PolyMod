@@ -16,7 +16,7 @@ namespace PolyMod
 				DebugConsole.Write($"Changed version to {Plugin.version}");
 				Plugin.version = -1;
 			}
-			return true;	
+			return true;
 		}
 
 		[HarmonyPostfix]
