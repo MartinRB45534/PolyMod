@@ -1,9 +1,11 @@
-﻿using I2.Loc;
+﻿using Cpp2IL.Core.Extensions;
+using I2.Loc;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Linq;
 using Newtonsoft.Json.Linq;
 using Polytopia.Data;
 using System.IO.Compression;
+using UnityEngine;
 
 namespace PolyMod
 {
@@ -11,69 +13,85 @@ namespace PolyMod
 	{
 		internal static void Init(JObject gld)
 		{
-			int idx = 0;
-
-			foreach (string path in Directory.GetFiles(Plugin.MODS_PATH, "*.polymod"))
+			foreach (string mod in Directory.GetFiles(Plugin.MODS_PATH, "*.polymod"))
 			{
-				foreach (var entry in new ZipArchive(File.OpenRead(path)).Entries)
+				foreach (var entry in new ZipArchive(File.OpenRead(mod)).Entries)
 				{
-					if (entry.ToString() == "patch.json")
+					string name = entry.ToString();
+					Stream stream = entry.Open();
+
+					if (name == "patch.json")
 					{
-						JObject patch = JObject.Parse(new StreamReader(entry.Open()).ReadToEnd());
-
-						foreach (JToken jtoken in patch.SelectTokens("$.localizationData.*").ToArray())
-						{
-							JArray token = jtoken.Cast<JArray>();
-							TermData term = LocalizationManager.Sources[0].AddTerm(Plugin.GetJTokenName(token).Replace('_', '.'));
-							List<string> strings = new();
-							for (int i = 0; i < token.Count; i++)
-							{
-								strings.Add((string)token[i]);
-							}
-							term.Languages = new Il2CppStringArray(strings.ToArray());
-						}
-						patch.Remove("localizationData");
-
-						foreach (JToken jtoken in patch.SelectTokens("$.*.*").ToArray())
-						{
-							JObject token = jtoken.Cast<JObject>();
-
-							if (token["idx"] != null && (int)token["idx"] == -1)
-							{
-								token["idx"] = --idx;
-								string id = Plugin.GetJTokenName(token);
-								switch (Plugin.GetJTokenName(token, 2))
-								{
-									case "tribeData":
-										EnumCache<TribeData.Type>.AddMapping(id, (TribeData.Type)idx);
-										break;
-									case "terrainData":
-										EnumCache<TerrainData.Type>.AddMapping(id, (TerrainData.Type)idx);
-										break;
-									case "resourceData":
-										EnumCache<ResourceData.Type>.AddMapping(id, (ResourceData.Type)idx);
-										break;
-									case "taskData":
-										EnumCache<TaskData.Type>.AddMapping(id, (TaskData.Type)idx);
-										break;
-									case "improvementData":
-										EnumCache<ImprovementData.Type>.AddMapping(id, (ImprovementData.Type)idx);
-										PrefabManager.improvements.Add((ImprovementData.Type)idx, PrefabManager.instance.improvementPrefabs[11].prefab);
-										break;
-									case "unitData":
-										EnumCache<UnitData.Type>.AddMapping(id, (UnitData.Type)idx);
-										break;
-									case "techData":
-										EnumCache<TechData.Type>.AddMapping(id, (TechData.Type)idx);
-										break;
-								}
-							}
-						}
-
-						gld.Merge(patch);
+						Patch(gld, JObject.Parse(new StreamReader(stream).ReadToEnd()));
+					}
+					if (Path.GetExtension(name) == "png")
+					{
+						//TODO: load sprites
 					}
 				}
 			}
+		}
+
+		private static void Patch(JObject gld, JObject patch)
+		{
+			int idx = 0;
+
+			foreach (JToken jtoken in patch.SelectTokens("$.localizationData.*").ToArray())
+			{
+				JArray token = jtoken.Cast<JArray>();
+				TermData term = LocalizationManager.Sources[0].AddTerm(Plugin.GetJTokenName(token).Replace('_', '.'));
+				List<string> strings = new();
+				for (int i = 0; i < token.Count; i++)
+				{
+					strings.Add((string)token[i]);
+				}
+				term.Languages = new Il2CppStringArray(strings.ToArray());
+			}
+			patch.Remove("localizationData");
+
+			foreach (JToken jtoken in patch.SelectTokens("$.*.*").ToArray())
+			{
+				JObject token = jtoken.Cast<JObject>();
+
+				if (token["idx"] != null && (int)token["idx"] == -1)
+				{
+					token["idx"] = --idx;
+					string id = Plugin.GetJTokenName(token);
+					switch (Plugin.GetJTokenName(token, 2))
+					{
+						case "tribeData":
+							EnumCache<TribeData.Type>.AddMapping(id, (TribeData.Type)idx);
+							break;
+						case "terrainData":
+							EnumCache<Polytopia.Data.TerrainData.Type>.AddMapping(id, (Polytopia.Data.TerrainData.Type)idx);
+							break;
+						case "resourceData":
+							EnumCache<ResourceData.Type>.AddMapping(id, (ResourceData.Type)idx);
+							break;
+						case "taskData":
+							EnumCache<TaskData.Type>.AddMapping(id, (TaskData.Type)idx);
+							break;
+						case "improvementData":
+							EnumCache<ImprovementData.Type>.AddMapping(id, (ImprovementData.Type)idx);
+							break;
+						case "unitData":
+							EnumCache<UnitData.Type>.AddMapping(id, (UnitData.Type)idx);
+							break;
+						case "techData":
+							EnumCache<TechData.Type>.AddMapping(id, (TechData.Type)idx);
+							break;
+					}
+				}
+			}
+
+			gld.Merge(patch);
+		}
+
+		private static Sprite BuildSprite(byte[] data)
+		{
+			Texture2D texture = new(1, 1);
+			texture.LoadImage(data);
+			return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
 		}
 	}
 }

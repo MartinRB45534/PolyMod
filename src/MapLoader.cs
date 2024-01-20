@@ -25,6 +25,7 @@ namespace PolyMod
 			{
 				throw new Exception("Too few capitals provided");
 			}
+
 			return capitals.GetRange(0, originalCapitals.Count);
 		}
 
