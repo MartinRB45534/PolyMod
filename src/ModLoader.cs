@@ -1,5 +1,4 @@
-﻿using Cpp2IL.Core.Extensions;
-using I2.Loc;
+﻿using I2.Loc;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Linq;
 using Newtonsoft.Json.Linq;
@@ -24,9 +23,11 @@ namespace PolyMod
 					{
 						Patch(gld, JObject.Parse(new StreamReader(stream).ReadToEnd()));
 					}
-					if (Path.GetExtension(name) == "png")
+					if (Path.GetExtension(name) == ".png")
 					{
-						//TODO: load sprites
+						//sprites.Add(name, BuildSprite(stream.ReadBytes()));
+						//GameManager.GetSpriteAtlasManager().cachedSprites.TryAdd("Heads", new());
+						//GameManager.GetSpriteAtlasManager().cachedSprites["Heads"].TryAdd(Path.GetFileNameWithoutExtension(name), BuildSprite(stream.ReadBytes()));
 					}
 				}
 			}
@@ -67,15 +68,18 @@ namespace PolyMod
 							break;
 						case "resourceData":
 							EnumCache<ResourceData.Type>.AddMapping(id, (ResourceData.Type)idx);
+							PrefabManager.resources.TryAdd((ResourceData.Type)idx, PrefabManager.resources[ResourceData.Type.Game]);
 							break;
 						case "taskData":
 							EnumCache<TaskData.Type>.AddMapping(id, (TaskData.Type)idx);
 							break;
 						case "improvementData":
 							EnumCache<ImprovementData.Type>.AddMapping(id, (ImprovementData.Type)idx);
+							PrefabManager.improvements.TryAdd((ImprovementData.Type)idx, PrefabManager.improvements[ImprovementData.Type.CustomsHouse]);
 							break;
 						case "unitData":
 							EnumCache<UnitData.Type>.AddMapping(id, (UnitData.Type)idx);
+							PrefabManager.units.TryAdd((UnitData.Type)idx, PrefabManager.units[UnitData.Type.Scout]);
 							break;
 						case "techData":
 							EnumCache<TechData.Type>.AddMapping(id, (TechData.Type)idx);
@@ -91,7 +95,7 @@ namespace PolyMod
 		{
 			Texture2D texture = new(1, 1);
 			texture.LoadImage(data);
-			return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+			return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero, 2112);
 		}
 	}
 }
