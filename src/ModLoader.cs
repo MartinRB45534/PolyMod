@@ -1,4 +1,5 @@
-﻿using I2.Loc;
+﻿using Cpp2IL.Core.Extensions;
+using I2.Loc;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Linq;
 using Newtonsoft.Json.Linq;
@@ -12,23 +13,25 @@ namespace PolyMod
 	{
 		internal static void Init(JObject gld)
 		{
-			foreach (string mod in Directory.GetFiles(Plugin.MODS_PATH, "*.polymod"))
+			foreach (string modname in Directory.GetFiles(Plugin.MODS_PATH, "*.polymod"))
 			{
-				foreach (var entry in new ZipArchive(File.OpenRead(mod)).Entries)
+				ZipArchive mod = new(File.OpenRead(modname));
+
+				foreach (var entry in mod.Entries)
 				{
 					string name = entry.ToString();
 					Stream stream = entry.Open();
 
-					if (name == "patch.json")
-					{
-						Patch(gld, JObject.Parse(new StreamReader(stream).ReadToEnd()));
-					}
 					if (Path.GetExtension(name) == ".png")
 					{
-						//sprites.Add(name, BuildSprite(stream.ReadBytes()));
-						//GameManager.GetSpriteAtlasManager().cachedSprites.TryAdd("Heads", new());
-						//GameManager.GetSpriteAtlasManager().cachedSprites["Heads"].TryAdd(Path.GetFileNameWithoutExtension(name), BuildSprite(stream.ReadBytes()));
+						
 					}
+				}
+
+				ZipArchiveEntry? patch = mod.GetEntry("patch.json");
+				if (patch != null) 
+				{
+					Patch(gld, JObject.Parse(new StreamReader(patch.Open()).ReadToEnd()));
 				}
 			}
 		}
