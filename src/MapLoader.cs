@@ -59,6 +59,12 @@ namespace PolyMod
 				JToken tileJson = map["map"][i];
 
 				if (tileJson["skip"] != null && (bool)tileJson["skip"]) continue;
+
+				tile.climate = (tileJson["climate"] == null || (int)tileJson["climate"] < 0 || (int)tileJson["climate"] > 16) ? 0 : (int)tileJson["climate"];
+				tile.skinType = tileJson["skinType"] == null ? SkinType.Default : EnumCache<SkinType>.GetType((string)tileJson["skinType"]);
+				tile.terrain = tileJson["terrain"] == null ? TerrainData.Type.None : EnumCache<TerrainData.Type>.GetType((string)tileJson["terrain"]);
+				tile.resource = tileJson["resource"] == null ? null : new() { type = EnumCache<ResourceData.Type>.GetType((string)tileJson["resource"]) };
+
 				if (tile.rulingCityCoordinates != tile.coordinates)
 				{
 					tile.improvement = tileJson["improvement"] == null ? null : new() { type = EnumCache<ImprovementData.Type>.GetType((string)tileJson["improvement"]) };
@@ -74,24 +80,21 @@ namespace PolyMod
 						};
 					}
 				}
-
-				tile.climate = (tileJson["climate"] == null || (int)tileJson["climate"] < 0 || (int)tileJson["climate"] > 16) ? 0 : (int)tileJson["climate"];
-				tile.skinType = tileJson["skinType"] == null ? SkinType.Default : EnumCache<SkinType>.GetType((string)tileJson["skinType"]);
-				tile.terrain = tileJson["terrain"] == null ? TerrainData.Type.None : EnumCache<TerrainData.Type>.GetType((string)tileJson["terrain"]);
-				tile.resource = tileJson["resource"] == null ? null : new() { type = EnumCache<ResourceData.Type>.GetType((string)tileJson["resource"]) };
-
-				if (tile.rulingCityCoordinates == tile.coordinates && map["autoTribe"] != null && (bool)map["autoTribe"])
+				else
 				{
-					state.TryGetPlayer(tile.owner, out PlayerState player);
-					if (player == null)
+					if (map["autoTribe"] != null && (bool)map["autoTribe"])
 					{
-						throw new Exception($"Player {tile.owner} does not exist");
-					}
-					foreach (var tribe in PolytopiaDataManager.currentVersion.tribes.Values)
-					{
-						if (tile.climate == tribe.climate)
+						state.TryGetPlayer(tile.owner, out PlayerState player);
+						if (player == null)
 						{
-							player.tribe = tribe.type;
+							throw new Exception($"Player {tile.owner} does not exist");
+						}
+						foreach (var tribe in PolytopiaDataManager.currentVersion.tribes.Values)
+						{
+							if (tile.climate == tribe.climate)
+							{
+								player.tribe = tribe.type;
+							}
 						}
 					}
 				}

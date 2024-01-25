@@ -14,7 +14,11 @@
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.674" />
-    <Reference Include="lib\*.dll" />
+	<Reference Include="lib\*.dll" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y /s $(TargetPath) &quot;C:\Program Files (x86)\Steam\steamapps\common\The Battle of Polytopia\BepInEx\plugins\&quot;&#xD;&#xA;start steam://rungameid/874390" />
+  </Target>
 
 </Project>
