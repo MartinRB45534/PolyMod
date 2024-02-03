@@ -27,7 +27,6 @@ namespace PolyMod
 
 		internal static void Start()
 		{
-			Directory.CreateDirectory(MODS_PATH);
 			Directory.CreateDirectory(MAPS_PATH);
 			DeveloperConsole.Init();
 		}

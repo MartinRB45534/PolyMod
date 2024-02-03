@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Newtonsoft.Json.Linq;
 using Polytopia.Data;
 
@@ -91,6 +92,70 @@ namespace PolyMod
 				new(Plugin.CAMERA_CONSTANT, Plugin.CAMERA_CONSTANT), CameraController.Instance.techViewBounds.size
 			);
 			UnityEngine.GameObject.Find("TechViewWorldSpace").transform.position = new(Plugin.CAMERA_CONSTANT, Plugin.CAMERA_CONSTANT);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetTileSpriteAddress), new Type[] { typeof(TerrainData.Type), typeof(string) })]
+		private static void SpriteData_GetTileSpriteAddress(ref SpriteAddress __result, TerrainData.Type terrain, string skinId)
+		{
+			ModLoader.GetSprite(EnumCache<TerrainData.Type>.GetName(terrain), skinId, 0, ref __result);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetResourceSpriteAddress), new Type[] { typeof(ResourceData.Type), typeof(string) })]
+		private static void SpriteData_GetResourceSpriteAddress(ref SpriteAddress __result, ResourceData.Type type, string skinId)
+		{
+			ModLoader.GetSprite(EnumCache<ResourceData.Type>.GetName(type), skinId, 0, ref __result);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetBuildingSpriteAddress), new Type[] { typeof(ImprovementData.Type), typeof(string) })]
+		private static void SpriteData_GetBuildingSpriteAddress(ref SpriteAddress __result, ImprovementData.Type type, string skinId)
+		{
+			ModLoader.GetSprite(EnumCache<ImprovementData.Type>.GetName(type), skinId, 0, ref __result);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetUnitIconAddress))]
+		private static void SpriteData_GetUnitIconAddress(ref SpriteAddress __result, UnitData.Type type)
+		{
+			ModLoader.GetSprite(EnumCache<UnitData.Type>.GetName(type), "", 0, ref __result);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetUISpriteAddress))]
+		private static void SpriteData_GetUISpriteAddress(ref SpriteAddress __result, string name)
+		{
+			ModLoader.GetSprite(name, "", 0, ref __result);
+		}
+
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetHeadSpriteAddress), new Type[] { typeof(int) })]
+		private static void SpriteData_GetHeadSpriteAddress_1(ref SpriteAddress __result, int tribe)
+		{
+			ModLoader.GetSprite("head", $"{tribe}", 0, ref __result);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetHeadSpriteAddress), new Type[] { typeof(string) })]
+		private static void SpriteData_GetHeadSpriteAddress_2(ref SpriteAddress __result, string specialId)
+		{
+			ModLoader.GetSprite("head", specialId, 0, ref __result);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetAvatarPartSpriteAddress))]
+		private static void SpriteData_GetAvatarPartSpriteAddress(ref SpriteAddress __result, string sprite)
+		{
+			ModLoader.GetSprite(sprite, "", 0, ref __result);
+		}
+
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetIconSpriteAddress))]
+		private static void SpriteData_GetIconSpriteAddress(ref SpriteAddress __result, string sprite)
+		{
+			ModLoader.GetSprite(sprite, "", 0, ref __result);
 		}
 
 		[HarmonyPrefix]

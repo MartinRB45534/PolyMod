@@ -13,6 +13,9 @@ namespace PolyMod
 	{
 		internal static void Init(JObject gld)
 		{
+			Directory.CreateDirectory(Plugin.MODS_PATH);
+			GameManager.GetSpriteAtlasManager().cachedSprites.TryAdd("Heads", new());
+
 			foreach (string modname in Directory.GetFiles(Plugin.MODS_PATH, "*.polymod"))
 			{
 				ZipArchive mod = new(File.OpenRead(modname));
@@ -20,16 +23,15 @@ namespace PolyMod
 				foreach (var entry in mod.Entries)
 				{
 					string name = entry.ToString();
-					Stream stream = entry.Open();
 
 					if (Path.GetExtension(name) == ".png")
 					{
-						
+						GameManager.GetSpriteAtlasManager().cachedSprites["Heads"].Add(Path.GetFileNameWithoutExtension(name), BuildSprite(entry.ReadBytes()));
 					}
 				}
 
 				ZipArchiveEntry? patch = mod.GetEntry("patch.json");
-				if (patch != null) 
+				if (patch != null)
 				{
 					Patch(gld, JObject.Parse(new StreamReader(patch.Open()).ReadToEnd()));
 				}
@@ -56,11 +58,12 @@ namespace PolyMod
 			foreach (JToken jtoken in patch.SelectTokens("$.*.*").ToArray())
 			{
 				JObject token = jtoken.Cast<JObject>();
-
+					
 				if (token["idx"] != null && (int)token["idx"] == -1)
 				{
 					token["idx"] = --idx;
 					string id = Plugin.GetJTokenName(token);
+
 					switch (Plugin.GetJTokenName(token, 2))
 					{
 						case "tribeData":
@@ -94,11 +97,27 @@ namespace PolyMod
 			gld.Merge(patch);
 		}
 
+		internal static void GetSprite(string name, string style, int level, ref SpriteAddress sprite) 
+		{
+			GetSpriteIfFound($"{name}__", ref sprite);
+			GetSpriteIfFound($"{name}_{style}_", ref sprite);
+			GetSpriteIfFound($"{name}__{level}", ref sprite);
+			GetSpriteIfFound($"{name}_{style}_{level}", ref sprite);
+		}
+
+		private static void GetSpriteIfFound(string id, ref SpriteAddress sprite) 
+		{
+			if (GameManager.GetSpriteAtlasManager().cachedSprites["Heads"].TryGetValue(id, out _))
+			{
+				sprite = new SpriteAddress("Heads", id);
+			}
+		}
+
 		private static Sprite BuildSprite(byte[] data)
 		{
 			Texture2D texture = new(1, 1);
 			texture.LoadImage(data);
-			return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero, 2112);
+			return Sprite.Create(texture, new(0, 0, texture.width, texture.height), Vector2.zero, 2112);
 		}
 	}
 }
