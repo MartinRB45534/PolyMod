@@ -117,7 +117,7 @@ namespace PolyMod
 		{
 			Texture2D texture = new(1, 1);
 			texture.LoadImage(data);
-			return Sprite.Create(texture, new(0, 0, texture.width, texture.height), Vector2.zero, 2112);
+			return Sprite.Create(texture, new(0, 0, texture.width, texture.height), new(0.5f, 0.5f), 2112);
 		}
 	}
 }
