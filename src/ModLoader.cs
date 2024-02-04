@@ -51,6 +51,10 @@ namespace PolyMod
 				{
 					strings.Add((string)token[i]);
 				}
+				for (int i = 0; i < LocalizationManager.GetAllLanguages().Count - strings.Count; i++)
+				{
+					strings.Add(term.Term);
+				}
 				term.Languages = new Il2CppStringArray(strings.ToArray());
 			}
 			patch.Remove("localizationData");
