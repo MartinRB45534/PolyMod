@@ -58,7 +58,7 @@ namespace PolyMod
 			foreach (JToken jtoken in patch.SelectTokens("$.*.*").ToArray())
 			{
 				JObject token = jtoken.Cast<JObject>();
-					
+
 				if (token["idx"] != null && (int)token["idx"] == -1)
 				{
 					token["idx"] = --idx;
@@ -97,15 +97,16 @@ namespace PolyMod
 			gld.Merge(patch);
 		}
 
-		internal static void GetSprite(string name, string style, int level, ref SpriteAddress sprite) 
+		internal static SpriteAddress GetSprite(string name, string style, int level, SpriteAddress sprite)
 		{
 			GetSpriteIfFound($"{name}__", ref sprite);
 			GetSpriteIfFound($"{name}_{style}_", ref sprite);
 			GetSpriteIfFound($"{name}__{level}", ref sprite);
 			GetSpriteIfFound($"{name}_{style}_{level}", ref sprite);
+			return sprite;
 		}
 
-		private static void GetSpriteIfFound(string id, ref SpriteAddress sprite) 
+		private static void GetSpriteIfFound(string id, ref SpriteAddress sprite)
 		{
 			if (GameManager.GetSpriteAtlasManager().cachedSprites["Heads"].TryGetValue(id, out _))
 			{
