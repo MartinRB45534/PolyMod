@@ -11,6 +11,8 @@ namespace PolyMod
 {
 	internal static class ModLoader
 	{
+		private static Dictionary<int, string> _styles = new();
+
 		internal static void Init(JObject gld)
 		{
 			Directory.CreateDirectory(Plugin.MODS_PATH);
@@ -63,9 +65,22 @@ namespace PolyMod
 			{
 				JObject token = jtoken.Cast<JObject>();
 
+				if (token["climate"] != null && !int.TryParse((string)token["climate"], out _))
+				{
+					--idx;
+					_styles.TryAdd(idx, (string)token["climate"]);
+					token["climate"] = idx;
+				}
+				if (token["style"] != null && !int.TryParse((string)token["style"], out _))
+				{
+					--idx;
+					_styles.TryAdd(idx, (string)token["style"]);
+					token["style"] = idx;
+				}
 				if (token["idx"] != null && (int)token["idx"] == -1)
 				{
-					token["idx"] = --idx;
+					--idx;
+					token["idx"] = idx;
 					string id = Plugin.GetJTokenName(token);
 
 					switch (Plugin.GetJTokenName(token, 2))
@@ -103,6 +118,11 @@ namespace PolyMod
 
 		internal static SpriteAddress GetSprite(string name, string style, int level, SpriteAddress sprite)
 		{
+			if (int.TryParse(style, out int istyle) && _styles.ContainsKey(istyle))
+			{
+				style = _styles[istyle];
+			}
+
 			GetSpriteIfFound($"{name}__", ref sprite);
 			GetSpriteIfFound($"{name}_{style}_", ref sprite);
 			GetSpriteIfFound($"{name}__{level}", ref sprite);

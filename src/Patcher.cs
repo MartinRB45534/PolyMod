@@ -151,7 +151,7 @@ namespace PolyMod
 			{
 				ModLoader.GetSprite("house", styleId, type, __result[0])
 			};
-			if (skinType != SkinType.Default) 
+			if (skinType != SkinType.Default)
 			{
 				sprites.Add(ModLoader.GetSprite("house", EnumCache<SkinType>.GetName(skinType), type, __result[1]));
 			}
