@@ -42,7 +42,7 @@ namespace PolyMod
 
 		private static void Patch(JObject gld, JObject patch)
 		{
-			int idx = 0;
+			int idx = 1000;
 
 			foreach (JToken jtoken in patch.SelectTokens("$.localizationData.*").ToArray())
 			{
@@ -67,19 +67,19 @@ namespace PolyMod
 
 				if (token["climate"] != null && !int.TryParse((string)token["climate"], out _))
 				{
-					--idx;
+					++idx;
 					_styles.TryAdd(idx, (string)token["climate"]);
 					token["climate"] = idx;
 				}
 				if (token["style"] != null && !int.TryParse((string)token["style"], out _))
 				{
-					--idx;
+                    ++idx;
 					_styles.TryAdd(idx, (string)token["style"]);
 					token["style"] = idx;
 				}
 				if (token["idx"] != null && (int)token["idx"] == -1)
 				{
-					--idx;
+                    ++idx;
 					token["idx"] = idx;
 					string id = Plugin.GetJTokenName(token);
 
