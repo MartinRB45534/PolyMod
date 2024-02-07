@@ -73,7 +73,7 @@ namespace PolyMod
 		[HarmonyPatch(typeof(PurchaseManager), nameof(PurchaseManager.IsTribeUnlocked))]
 		private static void PurchaseManager_IsTribeUnlocked(ref bool __result, TribeData.Type type)
 		{
-			__result = (int)type >= 1000 || __result;
+			__result = (int)type >= Plugin.AUTOIDX_STARTS_FROM || __result;
 		}
 
 		[HarmonyPrefix]

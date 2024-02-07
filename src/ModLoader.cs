@@ -42,7 +42,7 @@ namespace PolyMod
 
 		private static void Patch(JObject gld, JObject patch)
 		{
-			int idx = 1000;
+			int idx = Plugin.AUTOIDX_STARTS_FROM;
 
 			foreach (JToken jtoken in patch.SelectTokens("$.localizationData.*").ToArray())
 			{
