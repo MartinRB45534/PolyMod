@@ -10,9 +10,9 @@
 
 |      Windows       |      Linux      |       OSX       | Android | IOS |
 | :----------------: | :-------------: | :-------------: | :-----: | :-: |
-| :white_check_mark: | :record_button: | :record_button: |   :x:   | :x: |
+| :white_check_mark: | :record_button:[^1] | :x: |   :x:   | :x: |
 
-:record_button:: :white_check_mark: using Steam Proton
+[^1]: ✅ using Steam Proton
 
 ## Installation
 
