@@ -113,7 +113,7 @@ namespace PolyMod
 				}
 			}
 
-			gld.Merge(patch);
+			gld.Merge(patch, Plugin.GLD_MERGE_SETTINGS);
 		}
 
 		internal static SpriteAddress GetSprite(SpriteAddress sprite, string name, string style = "", int level = 0)
