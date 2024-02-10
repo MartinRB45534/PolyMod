@@ -149,11 +149,11 @@ namespace PolyMod
 		{
 			List<SpriteAddress> sprites = new()
 			{
-				ModLoader.GetSprite(__result[0], "house", styleId)
+				ModLoader.GetSprite(__result[0], "house", styleId, type)
 			};
 			if (skinType != SkinType.Default)
 			{
-				sprites.Add(ModLoader.GetSprite(__result[1], "house", EnumCache<SkinType>.GetName(skinType)));
+				sprites.Add(ModLoader.GetSprite(__result[1], "house", EnumCache<SkinType>.GetName(skinType), type));
 			}
 			__result = sprites.ToArray();
 		}
