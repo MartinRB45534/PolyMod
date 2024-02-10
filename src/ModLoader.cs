@@ -116,7 +116,7 @@ namespace PolyMod
 			gld.Merge(patch);
 		}
 
-		internal static SpriteAddress GetSprite(string name, string style, int level, SpriteAddress sprite)
+		internal static SpriteAddress GetSprite(SpriteAddress sprite, string name, string style = "", int level = 0)
 		{
 			if (int.TryParse(style, out int istyle) && _styles.ContainsKey(istyle))
 			{

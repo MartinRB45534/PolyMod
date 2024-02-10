@@ -98,49 +98,49 @@ namespace PolyMod
 		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetTileSpriteAddress), new Type[] { typeof(TerrainData.Type), typeof(string) })]
 		private static void SpriteData_GetTileSpriteAddress(ref SpriteAddress __result, TerrainData.Type terrain, string skinId)
 		{
-			__result = ModLoader.GetSprite(EnumCache<TerrainData.Type>.GetName(terrain), skinId, 0, __result);
+			__result = ModLoader.GetSprite(__result, EnumCache<TerrainData.Type>.GetName(terrain), skinId);
 		}
 
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetResourceSpriteAddress), new Type[] { typeof(ResourceData.Type), typeof(string) })]
 		private static void SpriteData_GetResourceSpriteAddress(ref SpriteAddress __result, ResourceData.Type type, string skinId)
 		{
-			__result = ModLoader.GetSprite(EnumCache<ResourceData.Type>.GetName(type), skinId, 0, __result);
+			__result = ModLoader.GetSprite(__result, EnumCache<ResourceData.Type>.GetName(type), skinId);
 		}
 
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetBuildingSpriteAddress), new Type[] { typeof(ImprovementData.Type), typeof(string) })]
 		private static void SpriteData_GetBuildingSpriteAddress(ref SpriteAddress __result, ImprovementData.Type type, string skinId)
 		{
-			__result = ModLoader.GetSprite(EnumCache<ImprovementData.Type>.GetName(type), skinId, 0, __result);
+			__result = ModLoader.GetSprite(__result, EnumCache<ImprovementData.Type>.GetName(type), skinId);
 		}
 
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetUnitIconAddress))]
 		private static void SpriteData_GetUnitIconAddress(ref SpriteAddress __result, UnitData.Type type)
 		{
-			__result = ModLoader.GetSprite("icon", EnumCache<UnitData.Type>.GetName(type), 0, __result);
+			__result = ModLoader.GetSprite(__result, "icon", EnumCache<UnitData.Type>.GetName(type));
 		}
 
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetHeadSpriteAddress), new Type[] { typeof(int) })]
 		private static void SpriteData_GetHeadSpriteAddress_1(ref SpriteAddress __result, int tribe)
 		{
-			__result = ModLoader.GetSprite("head", $"{tribe}", 0, __result);
+			__result = ModLoader.GetSprite(__result, "head", $"{tribe}");
 		}
 
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetHeadSpriteAddress), new Type[] { typeof(string) })]
 		private static void SpriteData_GetHeadSpriteAddress_2(ref SpriteAddress __result, string specialId)
 		{
-			__result = ModLoader.GetSprite("head", specialId, 0, __result);
+			__result = ModLoader.GetSprite(__result, "head", specialId);
 		}
 
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetAvatarPartSpriteAddress))]
 		private static void SpriteData_GetAvatarPartSpriteAddress(ref SpriteAddress __result, string sprite)
 		{
-			__result = ModLoader.GetSprite(sprite, "", 0, __result);
+			__result = ModLoader.GetSprite(__result, sprite, "");
 		}
 
 		[HarmonyPostfix]
@@ -149,11 +149,11 @@ namespace PolyMod
 		{
 			List<SpriteAddress> sprites = new()
 			{
-				ModLoader.GetSprite("house", styleId, type, __result[0])
+				ModLoader.GetSprite(__result[0], "house", styleId)
 			};
 			if (skinType != SkinType.Default)
 			{
-				sprites.Add(ModLoader.GetSprite("house", EnumCache<SkinType>.GetName(skinType), type, __result[1]));
+				sprites.Add(ModLoader.GetSprite(__result[1], "house", EnumCache<SkinType>.GetName(skinType)));
 			}
 			__result = sprites.ToArray();
 		}
