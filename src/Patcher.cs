@@ -1,7 +1,10 @@
 ﻿using HarmonyLib;
+using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Newtonsoft.Json.Linq;
 using Polytopia.Data;
+using PolytopiaBackendBase.Game;
+using UnityEngine;
 
 namespace PolyMod
 {
@@ -249,14 +252,32 @@ namespace PolyMod
 			}
 			if (Plugin.localClient != null)
 			{
-				//Save a screenshot
-				ScreenCapture.CaptureScreenshot(Plugin.ML_PATH + "/screenshot" + Plugin.ml_idx + ".png");
-				//Save the game state as a JSON
-				System.IO.File.WriteAllText(Plugin.ML_PATH + "/gamestate" + Plugin.ml_idx++ + ".json", Plugin.localClient.GameState.ToString());
 				GameManager.instance.client = Plugin.localClient;
 				Plugin.localClient = null;
 			}
 			Plugin.unview = false;
+		}
+
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(AI), nameof(AI.GetMove))]
+		public static bool AI_GetMove()
+		{
+			DebugConsole.Write("AI.GetMove");
+			if (!Plugin.bots_only || GameManager.PreliminaryGameSettings.BaseGameMode != GameMode.Custom)
+			{
+				return true;
+			}
+		
+			//Save a screenshot
+			ScreenCapture.CaptureScreenshot(Plugin.ML_PATH + "/screenshot" + Plugin.ml_idx + ".png");
+			//Save the game state as a binary using GameManager.GameState.Serialize()
+			Il2CppSystem.IO.BinaryWriter writer = new Il2CppSystem.IO.BinaryWriter(Il2CppSystem.IO.File.Open(Plugin.ML_PATH + "/gamestate" + Plugin.ml_idx++, Il2CppSystem.IO.FileMode.Create));
+			GameManager.GameState.Serialize(writer, GameManager.GameState.Version);
+			writer.Close();
+			//Save some extra parameters in a JSON file
+			JObject json = new JObject{};
+			//view position and zoom, or something
+			return true;
 		}
 
 		[HarmonyPostfix]
@@ -362,10 +383,10 @@ namespace PolyMod
 		}
 
 		[HarmonyPostfix]
-		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetTileSpriteAddress), new Type[] { typeof(TerrainData.Type), typeof(string) })]
-		private static void SpriteData_GetTileSpriteAddress(ref SpriteAddress __result, TerrainData.Type terrain, string skinId)
+		[HarmonyPatch(typeof(SpriteData), nameof(SpriteData.GetTileSpriteAddress), new Type[] { typeof(Polytopia.Data.TerrainData.Type), typeof(string) })]
+		private static void SpriteData_GetTileSpriteAddress(ref SpriteAddress __result, Polytopia.Data.TerrainData.Type terrain, string skinId)
 		{
-			__result = ModLoader.GetSprite(__result, EnumCache<TerrainData.Type>.GetName(terrain), skinId);
+			__result = ModLoader.GetSprite(__result, EnumCache<Polytopia.Data.TerrainData.Type>.GetName(terrain), skinId);
 		}
 
 		[HarmonyPostfix]
