@@ -20,6 +20,13 @@ namespace PolyMod
 
         internal static int version = -1;
 
+		internal static bool bots_only = false;
+		internal static bool unview = false;
+		internal static LocalClient? localClient = null;
+
+		internal static readonly string ML_PATH = Path.Combine(BASE_PATH, "MLdata");
+		internal static int ml_idx = 0;
+
 		internal static bool start = false;
 
 		public override void Load()

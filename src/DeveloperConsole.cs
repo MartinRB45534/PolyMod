@@ -49,6 +49,18 @@ namespace PolyMod
 				Plugin.version = int.Parse(args[0].ToString());
 				DebugConsole.Write($"Next game will start with version {Plugin.version}");
 			});
+			AddCommand("bots", "", (args) =>
+			{
+				Plugin.bots_only = !Plugin.bots_only;
+
+				DebugConsole.Write($"Bots only: {Plugin.bots_only}");
+			});
+			AddCommand("auto", "", (args) =>
+			{
+				GameManager.debugAutoPlayLocalPlayer = !GameManager.debugAutoPlayLocalPlayer;
+
+				DebugConsole.Write($"Autoplay: {GameManager.debugAutoPlayLocalPlayer}");
+			});
 		}
 
 		internal static void Toggle()
