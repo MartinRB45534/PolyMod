@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Newtonsoft.Json.Linq;
 using Polytopia.Data;
@@ -267,7 +266,7 @@ namespace PolyMod
 			{
 				return true;
 			}
-		
+
 			//Save a screenshot
 			ScreenCapture.CaptureScreenshot(Plugin.ML_PATH + "/screenshot" + Plugin.ml_idx + ".png");
 			//Save the game state as a binary using GameManager.GameState.Serialize()
@@ -275,8 +274,21 @@ namespace PolyMod
 			GameManager.GameState.Serialize(writer, GameManager.GameState.Version);
 			writer.Close();
 			//Save some extra parameters in a JSON file
-			JObject json = new JObject{};
-			//view position and zoom, or something
+			Vector3 position1 = Camera.main.WorldToScreenPoint(GameManager.GameState.Map.tiles[0].coordinates.ToPosition());
+			Vector3 position2 = Camera.main.WorldToScreenPoint(GameManager.GameState.Map.tiles[GameManager.GameState.Map.tiles.Length - 1].coordinates.ToPosition());
+			Vector3 position3 = Camera.main.WorldToScreenPoint(GameManager.GameState.Map.tiles[GameManager.GameState.Map.Width - 1].coordinates.ToPosition());
+			Vector3 position4 = Camera.main.WorldToScreenPoint(GameManager.GameState.Map.tiles[GameManager.GameState.Map.tiles.Length - GameManager.GameState.Map.Width].coordinates.ToPosition());
+			JObject json = new JObject();
+			json["x1"] = position1.x;
+			json["y1"] = position1.y;
+			json["x2"] = position2.x;
+			json["y2"] = position2.y;
+			json["x3"] = position3.x;
+			json["y3"] = position3.y;
+			json["x4"] = position4.x;
+			json["y4"] = position4.y;
+			//Save the JSON file
+			Il2CppSystem.IO.File.WriteAllText(Plugin.ML_PATH + "/parameters" + Plugin.ml_idx + ".json", json.ToString());
 			return true;
 		}
 
