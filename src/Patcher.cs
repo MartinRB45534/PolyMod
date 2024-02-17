@@ -270,7 +270,7 @@ namespace PolyMod
 			//Save a screenshot
 			ScreenCapture.CaptureScreenshot(Plugin.ML_PATH + "/screenshot" + Plugin.ml_idx + ".png");
 			//Save the game state as a binary using GameManager.GameState.Serialize()
-			Il2CppSystem.IO.BinaryWriter writer = new Il2CppSystem.IO.BinaryWriter(Il2CppSystem.IO.File.Open(Plugin.ML_PATH + "/gamestate" + Plugin.ml_idx++, Il2CppSystem.IO.FileMode.Create));
+			Il2CppSystem.IO.BinaryWriter writer = new Il2CppSystem.IO.BinaryWriter(Il2CppSystem.IO.File.Open(Plugin.ML_PATH + "/gamestate" + Plugin.ml_idx, Il2CppSystem.IO.FileMode.Create));
 			GameManager.GameState.Serialize(writer, GameManager.GameState.Version);
 			writer.Close();
 			//Save some extra parameters in a JSON file
@@ -287,8 +287,21 @@ namespace PolyMod
 			json["y3"] = position3.y;
 			json["x4"] = position4.x;
 			json["y4"] = position4.y;
+			Vector3 position1_ = Camera.main.WorldToViewportPoint(GameManager.GameState.Map.tiles[0].coordinates.ToPosition());
+			Vector3 position2_ = Camera.main.WorldToViewportPoint(GameManager.GameState.Map.tiles[GameManager.GameState.Map.tiles.Length - 1].coordinates.ToPosition());
+			Vector3 position3_ = Camera.main.WorldToViewportPoint(GameManager.GameState.Map.tiles[GameManager.GameState.Map.Width - 1].coordinates.ToPosition());
+			Vector3 position4_ = Camera.main.WorldToViewportPoint(GameManager.GameState.Map.tiles[GameManager.GameState.Map.tiles.Length - GameManager.GameState.Map.Width].coordinates.ToPosition());
+			json["x1_"] = position1_.x;
+			json["y1_"] = position1_.y;
+			json["x2_"] = position2_.x;
+			json["y2_"] = position2_.y;
+			json["x3_"] = position3_.x;
+			json["y3_"] = position3_.y;
+			json["x4_"] = position4_.x;
+			json["y4_"] = position4_.y;
 			//Save the JSON file
 			Il2CppSystem.IO.File.WriteAllText(Plugin.ML_PATH + "/parameters" + Plugin.ml_idx + ".json", json.ToString());
+			Plugin.ml_idx++;
 			return true;
 		}
 
