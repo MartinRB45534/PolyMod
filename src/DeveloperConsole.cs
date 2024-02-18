@@ -49,6 +49,10 @@ namespace PolyMod
 				Plugin.version = int.Parse(args[0].ToString());
 				DebugConsole.Write($"Next game will start with version {Plugin.version}");
 			});
+			AddCommand("replay_resume", "", (args) =>
+			{
+				new ReplayResumer().ResumeAsHotseatGame();
+			});
 		}
 
 		internal static void Toggle()
