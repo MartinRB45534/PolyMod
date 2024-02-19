@@ -44,7 +44,7 @@ namespace PolyMod
         public HotseatClient SetHotseatClient()
         {
             GameManager.instance.settings.GameType = GameType.PassAndPlay;
-            Log.Verbose("{0} Setting up hotseat client...", new Il2CppSystem.Object[] { "<color=#FFFFFF>[GameManager]</color>"});
+            Log.Info("{0} Setting up hotseat client...", new Il2CppSystem.Object[] { "<color=#FFFFFF>[GameManager]</color>"});
             HotseatClient hotseatClient = new HotseatClient
             {
                 OnConnected = new Action(GameManager.instance.OnLocalClientConnected),
@@ -63,8 +63,11 @@ namespace PolyMod
             // Modify the gameState as needed
             replayClient.initialGameState.Settings.GameType = GameType.PassAndPlay;
             replayClient.currentGameState.Settings.GameType = GameType.PassAndPlay;
+            // byte[] allcommands = replayClient.currentGameState.GetCommandStack();
+            // byte[] newcommands = allcommands[..replayClient.GetLastSeenCommand()];
+            // replayClient.currentGameState.LoadCommandStack(newcommands);
             // Mimic the session opening process
-            Log.Verbose("{0} Transforming replay session...", new Il2CppSystem.Object[]
+            Log.Info("{0} Transforming replay session...", new Il2CppSystem.Object[]
                 {HotseatClient.LOG_PREFIX,
             });
             hotseatClient.Reset();
