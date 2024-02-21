@@ -182,5 +182,16 @@ namespace PolyMod
 
 			return false;
 		}
-	}
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(AudioManager), nameof(AudioManager.SetAmbienceClimate))]
+        private static void AudioManager_SetAmbienceClimatePrefix(ref int climate)
+        {
+            if (climate > 16)
+            {
+                climate = 1;
+            }
+        }
+
+    }
 }
