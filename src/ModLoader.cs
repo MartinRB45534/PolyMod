@@ -1,6 +1,4 @@
-﻿using Cpp2IL.Core.Extensions;
-using I2.Loc;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+﻿using I2.Loc;
 using Il2CppSystem.Linq;
 using Newtonsoft.Json.Linq;
 using Polytopia.Data;
