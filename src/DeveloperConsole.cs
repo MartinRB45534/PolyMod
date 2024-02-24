@@ -49,7 +49,7 @@ namespace PolyMod
 			});
 			AddCommand("replay_resume", "", (args) =>
 			{
-				new ReplayResumer().ResumeAsHotseatGame();
+				ReplayResumer.Resume();
 			});
 		}
 

@@ -3,9 +3,9 @@ using Il2CppSystem.Runtime.CompilerServices;
 
 namespace PolyMod
 {
-    internal class ReplayResumer
+    internal static class ReplayResumer
     {
-        public void ResumeAsHotseatGame()
+        public static void Resume()
         {
             ClientBase replayClient = GameManager.Client;
             if(!replayClient.IsReplay)
@@ -34,16 +34,24 @@ namespace PolyMod
             if (taskAwaiter.GetResult())
             {
                 GameManager.instance.LoadLevel();
-                MakeResumePopup();
-            }
+				PopupManager.GetBasicPopup(new PopupManager.BasicPopupData
+				{
+					header = "Resuming from Replay",
+					description = "The game has been turned from a replay into a hotseat game. You can now continue playing.",
+					buttonData = new PopupBase.PopupButtonData[]
+				{
+					new PopupBase.PopupButtonData("buttons.ok", PopupBase.PopupButtonData.States.Selected, null, -1, true, null)
+				}
+				}).Show();
+			}
         }
 
-        public HotseatClient SetHotseatClient()
+        public static HotseatClient SetHotseatClient()
         {
             GameManager.instance.settings.GameType = GameType.PassAndPlay;
             Log.Info("{0} Setting up hotseat client...", new Il2CppSystem.Object[] { "<color=#FFFFFF>[GameManager]</color>"});
-            HotseatClient hotseatClient = new HotseatClient
-            {
+            HotseatClient hotseatClient = new()
+			{
                 OnConnected = new Action(GameManager.instance.OnLocalClientConnected),
                 OnDisconnected = new Action(GameManager.instance.OnClientDisconnected),
                 OnSessionOpened = new Action(GameManager.instance.OnClientSessionOpened),
@@ -55,7 +63,7 @@ namespace PolyMod
             return hotseatClient;
         }
 
-        public Il2CppSystem.Threading.Tasks.Task<bool> TransformClient(ClientBase replayClient, HotseatClient hotseatClient)
+        public static Il2CppSystem.Threading.Tasks.Task<bool> TransformClient(ClientBase replayClient, HotseatClient hotseatClient)
         {
             GameState initialGameState = replayClient.initialGameState;
             GameState lastTurnGameState;
@@ -151,19 +159,6 @@ namespace PolyMod
                 return false;
             }
             return true;
-        }
-
-        public void MakeResumePopup()
-        {
-            BasicPopup popup = PopupManager.GetBasicPopup(new PopupManager.BasicPopupData{
-                header = "Resuming from Replay",
-                description = "The game has been turned from a replay into a hotseat game. You can now continue playing.",
-                buttonData = new PopupBase.PopupButtonData[]
-                {
-                    new PopupBase.PopupButtonData("buttons.ok", PopupBase.PopupButtonData.States.Selected, null, -1, true, null)
-                }
-            });
-            popup.Show();
         }
     }
 }
