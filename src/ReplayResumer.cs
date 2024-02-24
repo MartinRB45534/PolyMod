@@ -1,6 +1,5 @@
 using PolytopiaBackendBase.Game;
 using Il2CppSystem.Runtime.CompilerServices;
-using Il2CppSystem.Collections.Generic;
 
 namespace PolyMod
 {
@@ -8,7 +7,6 @@ namespace PolyMod
     {
         public void ResumeAsHotseatGame()
         {
-            // Check that we are in a replay
             ClientBase replayClient = GameManager.Client;
             if(!replayClient.IsReplay)
             {
@@ -17,7 +15,6 @@ namespace PolyMod
                 return;
             }
 
-            // Proceed to create a new hotseat game
             GameManager.instance.SetLoadingGame(true);
             Log.Info("{0} Loading new Hotseat {1} Game from replay", new Il2CppSystem.Object[]
             {
@@ -25,7 +22,6 @@ namespace PolyMod
                 GameManager.instance.settings.BaseGameMode.ToString()
             });
             
-            // Get the new hotseat client
             HotseatClient hotseatClient = SetHotseatClient();
             if(hotseatClient == null)
             {
@@ -61,7 +57,6 @@ namespace PolyMod
 
         public Il2CppSystem.Threading.Tasks.Task<bool> TransformClient(ClientBase replayClient, HotseatClient hotseatClient)
         {
-            // Modify the gameState as needed
             GameState initialGameState = replayClient.initialGameState;
             GameState lastTurnGameState;
             GameState currentGameState;
@@ -84,7 +79,6 @@ namespace PolyMod
                 Log.Error("{0} Failed to execute commands: {1}", new Il2CppSystem.Object[] { "<color=#FFFFFF>[GameManager]</color>", error });
                 return Il2CppSystem.Threading.Tasks.Task.FromResult<bool>(false);
             }
-            // Mimic the session opening process
             Log.Info("{0} Transforming replay session...", new Il2CppSystem.Object[]
                 {HotseatClient.LOG_PREFIX,
             });
@@ -161,7 +155,6 @@ namespace PolyMod
 
         public void MakeResumePopup()
         {
-            // Make a popup to tell the user that the game is resuming from replay
             BasicPopup popup = PopupManager.GetBasicPopup(new PopupManager.BasicPopupData{
                 header = "Resuming from Replay",
                 description = "The game has been turned from a replay into a hotseat game. You can now continue playing.",
