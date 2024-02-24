@@ -27,4 +27,4 @@ Download PolyMod from [github releases](https://github.com/IExploitableMan/PolyM
 ## Features
 
 - Console `Ctrl + Tab`
-- Map editor
+- Map Loader

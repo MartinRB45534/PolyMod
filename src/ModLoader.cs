@@ -1,6 +1,4 @@
-﻿using Cpp2IL.Core.Extensions;
-using I2.Loc;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+﻿using I2.Loc;
 using Il2CppSystem.Linq;
 using Newtonsoft.Json.Linq;
 using Polytopia.Data;
@@ -73,13 +71,13 @@ namespace PolyMod
 				}
 				if (token["style"] != null && !int.TryParse((string)token["style"], out _))
 				{
-                    ++idx;
+					++idx;
 					_styles.TryAdd(idx, (string)token["style"]);
 					token["style"] = idx;
 				}
 				if (token["idx"] != null && (int)token["idx"] == -1)
 				{
-                    ++idx;
+					++idx;
 					token["idx"] = idx;
 					string id = Plugin.GetJTokenName(token);
 
