@@ -34,15 +34,6 @@ namespace PolyMod
             if (taskAwaiter.GetResult())
             {
                 GameManager.instance.LoadLevel();
-				PopupManager.GetBasicPopup(new PopupManager.BasicPopupData
-				{
-					header = "Resuming from Replay",
-					description = "The game has been turned from a replay into a hotseat game. You can now continue playing.",
-					buttonData = new PopupBase.PopupButtonData[]
-				{
-					new PopupBase.PopupButtonData("buttons.ok", PopupBase.PopupButtonData.States.Selected, null, -1, true, null)
-				}
-				}).Show();
 			}
         }
 
@@ -70,6 +61,7 @@ namespace PolyMod
             GameState currentGameState;
             GameState otherCurrentGameState;
             initialGameState.Settings.GameType = GameType.PassAndPlay;
+            initialGameState.Settings.GameName = initialGameState.Settings.GameName + " from move " + replayClient.GetLastSeenCommand().ToString();
             byte[] array = SerializationHelpers.ToByteArray(initialGameState, replayClient.initialGameState.Version);
             SerializationHelpers.FromByteArray(array, out currentGameState);
             SerializationHelpers.FromByteArray(array, out lastTurnGameState);
@@ -97,6 +89,10 @@ namespace PolyMod
             hotseatClient.currentGameState = currentGameState;
             hotseatClient.lastTurnGameState = initialGameState;
             hotseatClient.lastSeenCommands = new ushort[replayClient.currentGameState.PlayerStates.Count];
+            for (int j = 0; j < replayClient.currentGameState.PlayerStates.Count; j++)
+            {
+                hotseatClient.lastSeenCommands[j] = replayClient.GetLastSeenCommand();
+            }
             hotseatClient.currentLocalPlayerIndex = hotseatClient.currentGameState.CurrentPlayerIndex;
             hotseatClient.hasInitializedSaveData = true;
             hotseatClient.UpdateGameStateImmediate(hotseatClient.currentGameState, StateUpdateReason.GameJoined);
