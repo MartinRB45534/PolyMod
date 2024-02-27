@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using BepInEx;
+using HarmonyLib;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace PolyMod
@@ -17,31 +19,24 @@ namespace PolyMod
 		internal static JsonMergeSettings GLD_MERGE_SETTINGS = new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Replace, MergeNullValueHandling = MergeNullValueHandling.Merge };
 
 		internal static int version = -1;
-
 		internal static bool start = false;
+
+		internal static ClientBase? replayClient;
 
 		public override void Load()
 		{
 			Harmony.CreateAndPatchAll(typeof(Patcher));
 		}
 
-		internal static void Start()
-		{
-			Directory.CreateDirectory(MAPS_PATH);
-			DeveloperConsole.Init();
-		}
-
 		internal static void Update()
 		{
-			if (!start)
+			if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
 			{
-				Start();
-				start = true;
+				ReplayResumer.Resume();
 			}
-
-			if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Tab))
+			if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
 			{
-				DeveloperConsole.Toggle();
+				ReplayResumer.BackToMove();
 			}
 		}
 

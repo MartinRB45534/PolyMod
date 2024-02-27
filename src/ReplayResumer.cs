@@ -5,6 +5,18 @@ namespace PolyMod
 {
     internal static class ReplayResumer
     {
+        public static void BackToMove()
+        {
+            if (Plugin.replayClient == null)
+            {
+                Log.Warning("We don't have a replay to resume");
+                return;
+            }
+            GameManager.instance.client = Plugin.replayClient;
+            Plugin.replayClient = null;
+            GameManager.instance.LoadLevel();
+        }
+        
         public static void Resume()
         {
             ClientBase replayClient = GameManager.Client;
@@ -33,6 +45,7 @@ namespace PolyMod
             TaskAwaiter<bool> taskAwaiter = TransformClient(replayClient, hotseatClient).GetAwaiter();
             if (taskAwaiter.GetResult())
             {
+                Plugin.replayClient = replayClient;
                 GameManager.instance.LoadLevel();
 			}
         }
@@ -56,13 +69,15 @@ namespace PolyMod
 
         public static Il2CppSystem.Threading.Tasks.Task<bool> TransformClient(ClientBase replayClient, HotseatClient hotseatClient)
         {
-            GameState initialGameState = replayClient.initialGameState;
+            GameState initialGameState;
+            byte[] array = SerializationHelpers.ToByteArray(replayClient.initialGameState, replayClient.initialGameState.Version);
+            SerializationHelpers.FromByteArray(array, out initialGameState);
             GameState lastTurnGameState;
             GameState currentGameState;
             GameState otherCurrentGameState;
             initialGameState.Settings.GameType = GameType.PassAndPlay;
             initialGameState.Settings.GameName = initialGameState.Settings.GameName + " from move " + replayClient.GetLastSeenCommand().ToString();
-            byte[] array = SerializationHelpers.ToByteArray(initialGameState, replayClient.initialGameState.Version);
+            array = SerializationHelpers.ToByteArray(replayClient.initialGameState, replayClient.initialGameState.Version);
             SerializationHelpers.FromByteArray(array, out currentGameState);
             SerializationHelpers.FromByteArray(array, out lastTurnGameState);
             SerializationHelpers.FromByteArray(array, out otherCurrentGameState);
@@ -96,9 +111,10 @@ namespace PolyMod
             hotseatClient.currentLocalPlayerIndex = hotseatClient.currentGameState.CurrentPlayerIndex;
             hotseatClient.hasInitializedSaveData = true;
             hotseatClient.UpdateGameStateImmediate(hotseatClient.currentGameState, StateUpdateReason.GameJoined);
+            // hotseatClient.SaveSession(hotseatClient.gameId.ToString(), false); // Version 104 and higher
             hotseatClient.SaveSession(hotseatClient.gameId, false);
             hotseatClient.PrepareSession();
-            return Il2CppSystem.Threading.Tasks.Task.FromResult<bool>(true);            
+            return Il2CppSystem.Threading.Tasks.Task.FromResult(true);
         }
 
     	private static bool ExecuteCommands(GameState gameState, Il2CppSystem.Collections.Generic.List<CommandBase> commands, out Il2CppSystem.Collections.Generic.List<CommandBase> executedCommands, out Il2CppSystem.Collections.Generic.List<CommandResultEvent> events, out string error)
