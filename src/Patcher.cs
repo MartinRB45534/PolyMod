@@ -10,5 +10,14 @@ namespace PolyMod
 		{
 			Plugin.Update();
 		}
+
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(GameManager), nameof(GameManager.CreateRemoteClient))]
+		private static bool GameManager_CreateRemoteClient()
+		{
+			// print the stack trace to find the caller
+			Log.Info(Environment.StackTrace);
+			return true;
+		}
 	}
 }

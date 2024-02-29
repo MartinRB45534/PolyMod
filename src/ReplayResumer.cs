@@ -1,5 +1,6 @@
 using PolytopiaBackendBase.Game;
 using Il2CppSystem.Runtime.CompilerServices;
+using Il2CppInterop.Runtime;
 
 namespace PolyMod
 {
@@ -16,11 +17,11 @@ namespace PolyMod
             Plugin.replayClient = null;
             GameManager.instance.LoadLevel();
         }
-        
+
         public static void Resume()
         {
-            ClientBase replayClient = GameManager.Client;
-            if(!replayClient.IsReplay)
+            ClientBase? replayClient = GameManager.Client;
+            if(replayClient == null || replayClient.clientType != ClientBase.ClientType.Replay)
             {
                 Log.Warning("{0} Command used outside of replay game, client is {1}", new Il2CppSystem.Object[] { "<color=#FFFFFF>[GameManager]</color>", GameManager.Client.GetType().ToString()});
                 GameManager.instance.SetLoadingGame(false);
@@ -69,13 +70,86 @@ namespace PolyMod
 
         public static Il2CppSystem.Threading.Tasks.Task<bool> TransformClient(ClientBase replayClient, HotseatClient hotseatClient)
         {
-            GameState initialGameState;
+            GameState replayInitialGameStateCopy;
             byte[] array = SerializationHelpers.ToByteArray(replayClient.initialGameState, replayClient.initialGameState.Version);
-            SerializationHelpers.FromByteArray(array, out initialGameState);
+            SerializationHelpers.FromByteArray(array, out replayInitialGameStateCopy);
+            // Create a new blank PassAndPlay game
+            GameSettings gameSettings = new GameSettings{
+                BaseGameMode = replayInitialGameStateCopy.Settings.BaseGameMode,
+                GameType = GameType.PassAndPlay,
+                Difficulty = replayInitialGameStateCopy.Settings.Difficulty,
+                OpponentCount = replayInitialGameStateCopy.Settings.OpponentCount,
+            };
+            for (int i = 0; i < replayInitialGameStateCopy.PlayerStates.Count; i++)
+            {
+                if (replayInitialGameStateCopy.PlayerStates[i].AutoPlay)
+                {
+                    PlayerData playerData = new PlayerData
+                    {
+                        defaultName = replayInitialGameStateCopy.PlayerStates[i].UserName,
+                        type = PlayerData.Type.Bot,
+                        tribe = replayInitialGameStateCopy.PlayerStates[i].tribe,
+                        knownTribe = true
+                    };
+                    playerData.profile.id = new Il2CppSystem.Guid();
+                    gameSettings.AddPlayer(playerData);
+                }
+                else
+                {
+                    PlayerData playerData2 = new PlayerData
+                    {
+                        defaultName = replayInitialGameStateCopy.PlayerStates[i].UserName,
+                        type = PlayerData.Type.Local,
+                        tribe = replayInitialGameStateCopy.PlayerStates[i].tribe,
+                        knownTribe = true,
+                        profile = GameManager.GetHotseatProfilesState().players[i]
+                    };
+                    gameSettings.AddPlayer(playerData2);
+                };
+            }
+            Il2CppSystem.Collections.Generic.List<PlayerState> playerStates = new Il2CppSystem.Collections.Generic.List<PlayerState>();
+            for (int i = 0; i < replayInitialGameStateCopy.PlayerStates.Count; i++)
+            {
+                PlayerData playerData3 = gameSettings.Players[i];
+					if (playerData3.type != PlayerData.Type.Bot)
+                    {
+                        PlayerState playerState4 = new PlayerState
+                        {
+                            Id = (byte)(i + 1),
+                            AccountId = new Il2CppSystem.Nullable<Il2CppSystem.Guid>(playerData3.profile.id),
+                            AutoPlay = playerData3.type == PlayerData.Type.Bot,
+                            UserName = playerData3.GetNameInternal(),
+                            tribe = playerData3.tribe,
+                            tribeMix = playerData3.tribeMix,
+                            hasChosenTribe = true,
+                            skinType = playerData3.skinType
+                        };
+                        playerStates.Add(playerState4);
+                    }
+					else
+					{
+						PlayerState playerState5 = new PlayerState
+                        {
+                            Id = (byte)(i + 1),
+                            AutoPlay = true,
+                            UserName = playerData3.GetNameInternal(),
+                            tribe = playerData3.tribe,
+                            tribeMix = playerData3.tribeMix,
+                            hasChosenTribe = true,
+                            skinType = playerData3.skinType
+                        };
+                        playerStates.Add(playerState5);
+					}
+            }
+            GameState initialGameState = new GameState{
+                Version = replayInitialGameStateCopy.Version,
+                Settings = gameSettings,
+                PlayerStates = playerStates,
+            };
             GameState lastTurnGameState;
             GameState currentGameState;
             GameState otherCurrentGameState;
-            initialGameState.Settings.GameType = GameType.PassAndPlay;
+            initialGameState.Map = replayInitialGameStateCopy.Map;
             initialGameState.Settings.GameName = initialGameState.Settings.GameName + " from move " + replayClient.GetLastSeenCommand().ToString();
             array = SerializationHelpers.ToByteArray(replayClient.initialGameState, replayClient.initialGameState.Version);
             SerializationHelpers.FromByteArray(array, out currentGameState);
@@ -111,7 +185,6 @@ namespace PolyMod
             hotseatClient.currentLocalPlayerIndex = hotseatClient.currentGameState.CurrentPlayerIndex;
             hotseatClient.hasInitializedSaveData = true;
             hotseatClient.UpdateGameStateImmediate(hotseatClient.currentGameState, StateUpdateReason.GameJoined);
-            // hotseatClient.SaveSession(hotseatClient.gameId.ToString(), false); // Version 104 and higher
             hotseatClient.SaveSession(hotseatClient.gameId.ToString(), false);
             hotseatClient.PrepareSession();
             return Il2CppSystem.Threading.Tasks.Task.FromResult(true);
