@@ -87,7 +87,7 @@ namespace PolyMod
             }
             Il2CppSystem.Collections.Generic.List<CommandBase> executedCommands = new Il2CppSystem.Collections.Generic.List<CommandBase>();
             Il2CppSystem.Collections.Generic.List<CommandResultEvent> events = new Il2CppSystem.Collections.Generic.List<CommandResultEvent>();
-            string error;
+            string? error;
             ExecuteCommands(currentGameState, otherCurrentGameState.CommandStack, out executedCommands, out events, out error);
             if (error != null)
             {
@@ -112,12 +112,12 @@ namespace PolyMod
             hotseatClient.hasInitializedSaveData = true;
             hotseatClient.UpdateGameStateImmediate(hotseatClient.currentGameState, StateUpdateReason.GameJoined);
             // hotseatClient.SaveSession(hotseatClient.gameId.ToString(), false); // Version 104 and higher
-            hotseatClient.SaveSession(hotseatClient.gameId, false);
+            hotseatClient.SaveSession(hotseatClient.gameId.ToString(), false);
             hotseatClient.PrepareSession();
             return Il2CppSystem.Threading.Tasks.Task.FromResult(true);
         }
 
-    	private static bool ExecuteCommands(GameState gameState, Il2CppSystem.Collections.Generic.List<CommandBase> commands, out Il2CppSystem.Collections.Generic.List<CommandBase> executedCommands, out Il2CppSystem.Collections.Generic.List<CommandResultEvent> events, out string error)
+    	private static bool ExecuteCommands(GameState gameState, Il2CppSystem.Collections.Generic.List<CommandBase> commands, out Il2CppSystem.Collections.Generic.List<CommandBase> executedCommands, out Il2CppSystem.Collections.Generic.List<CommandResultEvent> events, out string? error)
         {
             executedCommands = new Il2CppSystem.Collections.Generic.List<CommandBase>();
             events = new Il2CppSystem.Collections.Generic.List<CommandResultEvent>();
