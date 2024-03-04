@@ -30,11 +30,11 @@ namespace PolyMod
 
 		internal static void Update()
 		{
-			if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
+			if (Input.GetKeyDown(KeyCode.R))
 			{
 				ReplayResumer.Resume();
 			}
-			if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
+			if (Input.GetKeyDown(KeyCode.T))
 			{
 				ReplayResumer.BackToMove();
 			}
